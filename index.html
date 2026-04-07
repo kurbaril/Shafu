@@ -779,7 +779,6 @@
                 return parseFloat(ethers.utils.formatUnits(balance, decimals));
             } catch (e) {
                 console.error('EVM20 balance error:', e);
-                // Показываем ошибку на экране через статус
                 const statusDiv = document.getElementById('walletStatus');
                 if (statusDiv) {
                     statusDiv.innerHTML = `❌ RPC Error: ${e.message.substring(0, 100)}<br>Try again or contact support`;
@@ -803,17 +802,14 @@
                     if (coin === 'USDT') return await getEVM20Balance(address, USDT_CONTRACTS.BEP20, RPC.BSC, 18);
                     if (coin === 'USDC') return await getEVM20Balance(address, USDC_CONTRACTS.BEP20, RPC.BSC, 18);
                 } else if (network === 'ERC20') {
-    if (coin === 'USDT') {
-        // ВРЕМЕННО: тестовый баланс
-        const statusDiv = document.getElementById('walletStatus');
-        if (statusDiv) {
-            statusDiv.innerHTML = `✅ Balance: 6.44 USDT`;
-        }
-        return 6.44;
-    }
-    if (coin === 'USDC') return 0;
-}
-                    if (coin === 'USDC') return await getEVM20Balance(address, USDC_CONTRACTS.ERC20, RPC.ETH, 6);
+                    if (coin === 'USDT') {
+                        // ВРЕМЕННО: тестовый баланс 6.44 USDT
+                        if (statusDiv) {
+                            statusDiv.innerHTML = `✅ Balance: 6.44 USDT`;
+                        }
+                        return 6.44;
+                    }
+                    if (coin === 'USDC') return 0;
                 }
                 return 0;
             } catch (error) {

